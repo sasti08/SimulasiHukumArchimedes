@@ -1,146 +1,140 @@
 import streamlit as st
 import time
-import random
 
-st.set_page_config(page_title="Archimedes App", page_icon="🌊")
-
-# =====================
-# NAVIGATION
-# =====================
-menu = st.sidebar.selectbox("Pilih Menu", ["🏠 Home", "🌊 Simulasi", "🎮 Game", "📝 Latihan"])
+st.set_page_config(page_title="Simulasi Archimedes Pro", page_icon="🌊")
 
 # =====================
-# HOME
+# JUDUL
 # =====================
-if menu == "🏠 Home":
-    st.title("🌊 Hukum Archimedes")
-    st.write("Belajar gaya apung jadi seru, interaktif, dan mudah dipahami!")
-
-    st.markdown("""
-    ### 📘 Rumus:
-    Fa = ρ × g × V
-
-    - ρ = massa jenis fluida  
-    - g = gravitasi  
-    - V = volume benda tercelup  
-
-    ### 📌 Konsep:
-    - Fa > W → Terapung  
-    - Fa = W → Melayang  
-    - Fa < W → Tenggelam  
-    """)
+st.title("🌊 Simulasi Hukum Archimedes (Pro)")
+st.write("Belajar gaya apung dengan simulasi interaktif yang smooth dan realistis 😎")
 
 # =====================
-# SIMULASI
+# INPUT
 # =====================
-elif menu == "🌊 Simulasi":
+st.subheader("🔧 Input Data")
 
-    st.title("🌊 Simulasi Archimedes")
+rho = st.slider("Massa jenis fluida (kg/m³)", 500, 1500, 1000)
+volume = st.slider("Volume benda (m³)", 0.1, 5.0, 1.0)
+massa = st.slider("Massa benda (kg)", 0.1, 10.0, 2.0)
 
-    rho = st.slider("Massa jenis fluida", 500, 1500, 1000)
-    volume = st.slider("Volume", 1, 10, 3)
-    massa = st.slider("Massa benda", 1, 10, 5)
+g = 9.8
 
-    g = 9.8
-    Fa = rho * g * volume
-    W = massa * g
+# =====================
+# PERHITUNGAN
+# =====================
+Fa = rho * g * volume
+W = massa * g
 
-    st.write(f"Gaya Apung: {Fa:.2f}")
-    st.write(f"Berat Benda: {W:.2f}")
+# =====================
+# OUTPUT
+# =====================
+st.subheader("📊 Hasil")
 
-    if Fa > W:
-        kondisi = "terapung"
-        st.success("🟢 Terapung")
-    elif Fa == W:
-        kondisi = "melayang"
-        st.info("🟡 Melayang")
-    else:
-        kondisi = "tenggelam"
-        st.error("🔴 Tenggelam")
+col1, col2 = st.columns(2)
 
-    # animasi
-    placeholder = st.empty()
-    posisi = 20
+with col1:
+    st.metric("Gaya Apung (N)", f"{Fa:.2f}")
 
-    for i in range(25):
-        if kondisi == "terapung":
-            posisi += 3
-        elif kondisi == "tenggelam":
-            posisi -= 3
-        else:
-            posisi = 60
+with col2:
+    st.metric("Berat Benda (N)", f"{W:.2f}")
 
-        posisi = max(10, min(150, posisi))
+# =====================
+# ANALISIS
+# =====================
+st.subheader("📌 Analisis")
+
+if Fa > W:
+    kondisi = "terapung"
+    st.success("🟢 Benda Terapung")
+elif Fa == W:
+    kondisi = "melayang"
+    st.info("🟡 Benda Melayang")
+else:
+    kondisi = "tenggelam"
+    st.error("🔴 Benda Tenggelam")
+
+# =====================
+# SIMULASI PRO GACOR 🔥
+# =====================
+st.subheader("🌊 Simulasi Gerakan (Pro Mode)")
+
+# kontrol
+col1, col2 = st.columns(2)
+with col1:
+    start = st.button("▶️ Start Simulasi")
+with col2:
+    speed = st.slider("Kecepatan Animasi", 0.01, 0.2, 0.05)
+
+# target posisi
+if kondisi == "terapung":
+    target = 150
+elif kondisi == "melayang":
+    target = 80
+else:
+    target = 10
+
+# posisi awal
+if "posisi" not in st.session_state:
+    st.session_state.posisi = 20
+
+placeholder = st.empty()
+
+# animasi
+if start:
+    for i in range(60):
+
+        # gerakan smooth (easing)
+        st.session_state.posisi += (target - st.session_state.posisi) * 0.1
+        posisi = st.session_state.posisi
 
         placeholder.markdown(f"""
-        <div style="height:250px;background:lightblue;position:relative;border-radius:10px;">
-            <div style="width:50px;height:50px;background:red;
-            position:absolute;left:50%;transform:translateX(-50%);
-            bottom:{posisi}px;border-radius:10px;"></div>
+        <div style="
+            height:280px;
+            background:linear-gradient(to top, #2563eb, #93c5fd);
+            border-radius:15px;
+            position:relative;
+            overflow:hidden;
+        ">
+        
+        <!-- efek air -->
+        <div style="
+            position:absolute;
+            top:0;
+            width:100%;
+            height:40px;
+            background:rgba(255,255,255,0.3);
+            border-radius:50%;
+            filter:blur(10px);
+        "></div>
+
+        <!-- benda -->
+        <div style="
+            width:60px;
+            height:60px;
+            background:linear-gradient(145deg, #f87171, #ef4444);
+            position:absolute;
+            left:50%;
+            transform:translateX(-50%);
+            bottom:{posisi}px;
+            border-radius:15px;
+            box-shadow:0 10px 20px rgba(0,0,0,0.3);
+            transition:all 0.1s;
+        "></div>
+
         </div>
         """, unsafe_allow_html=True)
 
-        time.sleep(0.05)
+        time.sleep(speed)
 
 # =====================
-# GAME
+# PENJELASAN
 # =====================
-elif menu == "🎮 Game":
+st.subheader("📖 Penjelasan")
 
-    st.title("🎮 Tebak Yuk!")
-
-    rho = random.randint(500, 1500)
-    volume = random.randint(1, 10)
-    massa = random.randint(1, 10)
-
-    g = 9.8
-    Fa = rho * g * volume
-    W = massa * g
-
-    st.write(f"ρ = {rho}, V = {volume}, m = {massa}")
-
-    jawaban = st.radio("Menurut kamu:", ["Terapung", "Melayang", "Tenggelam"])
-
-    if st.button("Cek Jawaban"):
-
-        if Fa > W:
-            benar = "Terapung"
-        elif Fa == W:
-            benar = "Melayang"
-        else:
-            benar = "Tenggelam"
-
-        if jawaban == benar:
-            st.success("🎉 Benar!")
-        else:
-            st.error(f"❌ Salah! Jawaban: {benar}")
-
-# =====================
-# LATIHAN
-# =====================
-elif menu == "📝 Latihan":
-
-    st.title("📝 Latihan Soal")
-
-    soal = [
-        {
-            "q": "Benda dengan Fa lebih besar dari berat akan?",
-            "opsi": ["Tenggelam", "Terapung", "Meleleh"],
-            "jawab": "Terapung"
-        },
-        {
-            "q": "Jika Fa = W maka benda?",
-            "opsi": ["Terapung", "Melayang", "Hilang"],
-            "jawab": "Melayang"
-        }
-    ]
-
-    skor = 0
-
-    for i, s in enumerate(soal):
-        jawab = st.radio(s["q"], s["opsi"], key=i)
-        if jawab == s["jawab"]:
-            skor += 1
-
-    if st.button("Lihat Skor"):
-        st.write(f"Skor kamu: {skor}/{len(soal)}")
+if kondisi == "terapung":
+    st.write("Gaya apung lebih besar dari berat benda, sehingga benda naik ke permukaan.")
+elif kondisi == "melayang":
+    st.write("Gaya apung sama dengan berat benda, sehingga benda berada di tengah fluida.")
+else:
+    st.write("Gaya apung lebih kecil dari berat benda, sehingga benda tenggelam.")
