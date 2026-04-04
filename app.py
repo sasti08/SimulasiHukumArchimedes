@@ -70,7 +70,7 @@ if menu == "🏠 Home":
 # =====================
 elif menu == "🌊 Simulasi":
 
-    st.title("🌊 Simulasi Pro")
+    st.title("🌊 Simulasi Archimedes")
 
     rho = st.slider("Massa jenis fluida", 500, 1500, 1000)
     volume = st.slider("Volume", 0.1, 5.0, 1.0)
@@ -154,27 +154,31 @@ elif menu == "🌊 Simulasi":
 # =====================
 elif menu == "🎮 Game":
 
-    st.title("🎮 Tebak Kondisi")
+    st.title("🎮 Hitung & Tebak")
 
-    rho = random.randint(500, 1500)
-    volume = random.randint(1, 10)
-    massa = random.randint(1, 10)
+    # angka GENAP
+    rho = random.choice(range(600, 1501, 100))   # 600,700,...1500
+    volume = random.choice(range(2, 11, 2))      # 2,4,6,8,10
+    massa = random.choice(range(2, 11, 2))       # 2,4,6,8,10
 
-    g = 9.8
+    g = 10  # biar hasil genap & gampang
+
     Fa = rho * g * volume
     W = massa * g
 
     st.markdown(f"""
     <div class="card">
-    ρ = {rho} <br>
-    V = {volume} <br>
-    m = {massa}
+    ρ = {rho} kg/m³ <br>
+    V = {volume} m³ <br>
+    m = {massa} kg <br><br>
+    Hitung gaya apung dan tentukan kondisi benda!
     </div>
     """, unsafe_allow_html=True)
 
-    jawaban = st.radio("Tebak:", ["Terapung", "Melayang", "Tenggelam"])
+    jawaban = st.radio("Jawaban kamu:", ["Terapung", "Melayang", "Tenggelam"])
 
-    if st.button("Cek"):
+    if st.button("Cek Jawaban"):
+
         if Fa > W:
             benar = "Terapung"
         elif Fa == W:
@@ -182,10 +186,13 @@ elif menu == "🎮 Game":
         else:
             benar = "Tenggelam"
 
+        st.write(f"💡 Gaya Apung = {Fa} N")
+        st.write(f"⚖️ Berat = {W} N")
+
         if jawaban == benar:
             st.success("🎉 Benar!")
         else:
-            st.error(f"❌ Salah! Jawaban: {benar}")
+            st.error(f"❌ Salah! Jawaban yang benar: {benar}")
 
 # =====================
 # LATIHAN
