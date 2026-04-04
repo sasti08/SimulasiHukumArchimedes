@@ -2,7 +2,7 @@ import streamlit as st
 import time
 import random
 
-st.set_page_config(page_title="Archimedes Pro Max", page_icon="🌊", layout="centered")
+st.set_page_config(page_title="Archimedes", page_icon="🌊", layout="centered")
 
 # =====================
 # STYLE (BIAR AESTHETIC)
@@ -36,13 +36,32 @@ if menu == "🏠 Home":
     st.title("🌊 Hukum Archimedes")
     st.markdown("""
     <div class="card">
+    
+    <h3>📖 Pengertian</h3>
+    Hukum Archimedes adalah hukum yang menjelaskan bahwa suatu benda yang dicelupkan ke dalam fluida
+    akan mengalami gaya ke atas yang disebut gaya apung.
+    
+    <br><br>
+    
+    <h3>📜 Bunyi Hukum Archimedes</h3>
+    "Suatu benda yang dicelupkan sebagian atau seluruhnya ke dalam fluida akan mengalami gaya ke atas
+    sebesar berat fluida yang dipindahkannya."
+    
+    <br><br>
+    
     <h3>📘 Rumus</h3>
     Fa = ρ × g × V <br><br>
+    
+    <b>Keterangan:</b><br>
+    ρ = massa jenis fluida <br>
+    g = percepatan gravitasi <br>
+    V = volume benda tercelup <br><br>
     
     <b>Konsep:</b><br>
     🟢 Fa > W → Terapung <br>
     🟡 Fa = W → Melayang <br>
     🔴 Fa < W → Tenggelam
+    
     </div>
     """, unsafe_allow_html=True)
 
