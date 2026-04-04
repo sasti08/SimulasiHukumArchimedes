@@ -1,176 +1,102 @@
 import streamlit as st
-import time
-import random
 
-st.set_page_config(page_title="Archimedes Pro Max", page_icon="🌊", layout="centered")
+st.set_page_config(page_title="Simulasi Archimedes", page_icon="🌊")
 
-# =====================
-# STYLE (BIAR AESTHETIC)
-# =====================
+# ======================
+# STYLE (BIAR MIRIP UI KAMU)
+# ======================
 st.markdown("""
 <style>
 body {
-    background: linear-gradient(to right, #dbeafe, #eff6ff);
-}
-.block-container {
-    padding-top: 2rem;
+    background-color: #cbd5e1;
 }
 .card {
-    background: white;
+    background: #e5e7eb;
+    padding: 25px;
+    border-radius: 20px;
+    text-align: center;
+}
+.simulasi-box {
+    background: #e5e7eb;
+    border-radius: 20px;
     padding: 20px;
-    border-radius: 15px;
-    box-shadow: 0 10px 25px rgba(0,0,0,0.1);
 }
 </style>
 """, unsafe_allow_html=True)
 
-# =====================
-# NAVBAR
-# =====================
-menu = st.sidebar.radio("Menu", ["🏠 Home", "🌊 Simulasi", "🎮 Game", "📝 Latihan"])
+# ======================
+# JUDUL
+# ======================
+st.title("🧊 Simulasi Hukum Archimedes")
 
-# =====================
-# HOME
-# =====================
-if menu == "🏠 Home":
-    st.title("🌊 Hukum Archimedes")
-    st.markdown("""
-    <div class="card">
-    <h3>📘 Rumus</h3>
-    Fa = ρ × g × V <br><br>
-    
-    <b>Konsep:</b><br>
-    🟢 Fa > W → Terapung <br>
-    🟡 Fa = W → Melayang <br>
-    🔴 Fa < W → Tenggelam
-    </div>
-    """, unsafe_allow_html=True)
+# ======================
+# INPUT CARD
+# ======================
+st.markdown('<div class="card">', unsafe_allow_html=True)
 
-# =====================
-# SIMULASI PRO
-# =====================
-st.subheader("🌊 Simulasi Gerakan")
+st.subheader("Bandingkan massa jenis")
 
-# INIT STATE
-if "jalan" not in st.session_state:
-    st.session_state.jalan = False
+rho_benda = st.number_input("Massa jenis benda", value=100.0)
+rho_air = st.number_input("Massa jenis fluida", value=50.0)
 
-if "posisi" not in st.session_state:
-    st.session_state.posisi = 20
+if st.button("Simulasikan"):
+    if rho_benda < rho_air:
+        status = "Mengapung 🟢"
+        posisi = 120
+    elif rho_benda == rho_air:
+        status = "Melayang 🟡"
+        posisi = 80
+    else:
+        status = "Tenggelam 🔴"
+        posisi = 20
 
-# BUTTON CONTROL
-col1, col2 = st.columns(2)
+    st.session_state.status = status
+    st.session_state.posisi = posisi
 
-with col1:
-    if st.button("▶️ Start"):
-        st.session_state.jalan = True
+# tampilkan status
+if "status" in st.session_state:
+    st.write(f"Status: {st.session_state.status}")
 
-with col2:
-    if st.button("⏹ Stop"):
-        st.session_state.jalan = False
+st.markdown('</div>', unsafe_allow_html=True)
 
-speed = st.slider("Kecepatan", 0.01, 0.2, 0.05)
+# ======================
+# SIMULASI VISUAL
+# ======================
+st.markdown('<div class="simulasi-box">', unsafe_allow_html=True)
 
-# TARGET POSISI
-if kondisi == "terapung":
-    target = 150
-elif kondisi == "melayang":
-    target = 80
-else:
-    target = 10
+posisi = st.session_state.get("posisi", 80)
 
-placeholder = st.empty()
+st.markdown(f"""
+<div style="
+    height:300px;
+    position:relative;
+    border-radius:20px;
+    overflow:hidden;
+    background:#e5e7eb;
+">
 
-# LOOP JALAN TERUS
-while st.session_state.jalan:
-
-    # gerakan smooth
-    st.session_state.posisi += (target - st.session_state.posisi) * 0.1
-    posisi = st.session_state.posisi
-
-    placeholder.markdown(f"""
+    <!-- air -->
     <div style="
-        height:280px;
-        background:linear-gradient(to top, #2563eb, #93c5fd);
-        border-radius:15px;
-        position:relative;
-        overflow:hidden;
-    ">
-    
+        position:absolute;
+        bottom:0;
+        width:100%;
+        height:50%;
+        background:#93c5fd;
+    "></div>
+
+    <!-- benda -->
     <div style="
-        width:60px;
-        height:60px;
-        background:linear-gradient(145deg, #f87171, #ef4444);
+        width:70px;
+        height:70px;
+        background:#8b5a2b;
         position:absolute;
         left:50%;
         transform:translateX(-50%);
         bottom:{posisi}px;
-        border-radius:15px;
-        box-shadow:0 10px 20px rgba(0,0,0,0.3);
+        border-radius:5px;
     "></div>
 
-    </div>
-    """, unsafe_allow_html=True)
+</div>
+""", unsafe_allow_html=True)
 
-    time.sleep(speed)
-
-# =====================
-# GAME
-# =====================
-elif menu == "🎮 Game":
-
-    st.title("🎮 Tebak Kondisi")
-
-    rho = random.randint(500, 1500)
-    volume = random.randint(1, 10)
-    massa = random.randint(1, 10)
-
-    g = 9.8
-    Fa = rho * g * volume
-    W = massa * g
-
-    st.markdown(f"""
-    <div class="card">
-    ρ = {rho} <br>
-    V = {volume} <br>
-    m = {massa}
-    </div>
-    """, unsafe_allow_html=True)
-
-    jawaban = st.radio("Tebak:", ["Terapung", "Melayang", "Tenggelam"])
-
-    if st.button("Cek"):
-        if Fa > W:
-            benar = "Terapung"
-        elif Fa == W:
-            benar = "Melayang"
-        else:
-            benar = "Tenggelam"
-
-        if jawaban == benar:
-            st.success("🎉 Benar!")
-        else:
-            st.error(f"❌ Salah! Jawaban: {benar}")
-
-# =====================
-# LATIHAN
-# =====================
-elif menu == "📝 Latihan":
-
-    st.title("📝 Latihan Soal")
-
-    soal = [
-        {"q": "Fa > W maka?", "opsi": ["Tenggelam", "Terapung", "Hilang"], "jawab": "Terapung"},
-        {"q": "Fa = W maka?", "opsi": ["Melayang", "Terapung", "Jatuh"], "jawab": "Melayang"},
-        {"q": "Fa < W maka?", "opsi": ["Terapung", "Tenggelam", "Terbang"], "jawab": "Tenggelam"},
-    ]
-
-    skor = 0
-
-    for i, s in enumerate(soal):
-        jawab = st.radio(s["q"], s["opsi"], key=i)
-        if jawab == s["jawab"]:
-            skor += 1
-
-    if st.button("Lihat Skor"):
-        st.success(f"Skor kamu: {skor}/{len(soal)}")
+st.markdown('</div>', unsafe_allow_html=True)
