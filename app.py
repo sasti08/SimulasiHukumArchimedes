@@ -49,86 +49,70 @@ if menu == "🏠 Home":
 # =====================
 # SIMULASI PRO
 # =====================
-elif menu == "🌊 Simulasi":
+st.subheader("🌊 Simulasi Gerakan")
 
-    st.title("🌊 Simulasi Pro")
+# INIT STATE
+if "jalan" not in st.session_state:
+    st.session_state.jalan = False
 
-    rho = st.slider("Massa jenis fluida", 500, 1500, 1000)
-    volume = st.slider("Volume", 0.1, 5.0, 1.0)
-    massa = st.slider("Massa", 0.1, 10.0, 2.0)
+if "posisi" not in st.session_state:
+    st.session_state.posisi = 20
 
-    g = 9.8
-    Fa = rho * g * volume
-    W = massa * g
+# BUTTON CONTROL
+col1, col2 = st.columns(2)
 
-    st.markdown(f"""
-    <div class="card">
-    Gaya Apung: <b>{Fa:.2f}</b> <br>
-    Berat Benda: <b>{W:.2f}</b>
+with col1:
+    if st.button("▶️ Start"):
+        st.session_state.jalan = True
+
+with col2:
+    if st.button("⏹ Stop"):
+        st.session_state.jalan = False
+
+speed = st.slider("Kecepatan", 0.01, 0.2, 0.05)
+
+# TARGET POSISI
+if kondisi == "terapung":
+    target = 150
+elif kondisi == "melayang":
+    target = 80
+else:
+    target = 10
+
+placeholder = st.empty()
+
+# LOOP JALAN TERUS
+while st.session_state.jalan:
+
+    # gerakan smooth
+    st.session_state.posisi += (target - st.session_state.posisi) * 0.1
+    posisi = st.session_state.posisi
+
+    placeholder.markdown(f"""
+    <div style="
+        height:280px;
+        background:linear-gradient(to top, #2563eb, #93c5fd);
+        border-radius:15px;
+        position:relative;
+        overflow:hidden;
+    ">
+    
+    <div style="
+        width:60px;
+        height:60px;
+        background:linear-gradient(145deg, #f87171, #ef4444);
+        position:absolute;
+        left:50%;
+        transform:translateX(-50%);
+        bottom:{posisi}px;
+        border-radius:15px;
+        box-shadow:0 10px 20px rgba(0,0,0,0.3);
+    "></div>
+
     </div>
     """, unsafe_allow_html=True)
 
-    if Fa > W:
-        kondisi = "terapung"
-        st.success("🟢 Terapung")
-    elif Fa == W:
-        kondisi = "melayang"
-        st.info("🟡 Melayang")
-    else:
-        kondisi = "tenggelam"
-        st.error("🔴 Tenggelam")
-
-    # ===== SIMULASI GACOR =====
-    st.subheader("🌊 Simulasi Gerakan")
-
-    col1, col2 = st.columns(2)
-    with col1:
-        start = st.button("▶️ Start")
-    with col2:
-        speed = st.slider("Speed", 0.01, 0.2, 0.05)
-
-    if kondisi == "terapung":
-        target = 150
-    elif kondisi == "melayang":
-        target = 80
-    else:
-        target = 10
-
-    if "posisi" not in st.session_state:
-        st.session_state.posisi = 20
-
-    placeholder = st.empty()
-
-    if start:
-        for i in range(60):
-            st.session_state.posisi += (target - st.session_state.posisi) * 0.1
-            posisi = st.session_state.posisi
-
-            placeholder.markdown(f"""
-            <div style="
-                height:280px;
-                background:linear-gradient(to top, #2563eb, #93c5fd);
-                border-radius:15px;
-                position:relative;
-                overflow:hidden;
-            ">
-            
-            <div style="
-                width:60px;
-                height:60px;
-                background:linear-gradient(145deg, #f87171, #ef4444);
-                position:absolute;
-                left:50%;
-                transform:translateX(-50%);
-                bottom:{posisi}px;
-                border-radius:15px;
-                box-shadow:0 10px 20px rgba(0,0,0,0.3);
-            "></div>
-
-            </div>
-            """, unsafe_allow_html=True)
-
-            time.sleep(speed)
+    time.sleep(speed)
 
 # =====================
 # GAME
