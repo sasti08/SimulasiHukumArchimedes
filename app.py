@@ -66,86 +66,74 @@ elif menu == "🌊 Simulasi":
     volume = st.slider("Volume (m³)", 0.1, 5.0, 1.0)
     massa = st.slider("Massa benda (kg)", 0.1, 10.0, 2.0)
 
-g = 9.8
-Fa = rho * g * volume
-W = massa * g
+    g = 9.8
+    Fa = rho * g * volume
+    W = massa * g
 
-# Tentukan kondisi
-if Fa > W:
-    kondisi = "terapung"
-    target = 220
-    st.success("🟢 Terapung")
-elif Fa == W:
-    kondisi = "melayang"
-    target = 140
-    st.info("🟡 Melayang")
-else:
-    kondisi = "tenggelam"
-    target = 60
-    st.error("🔴 Tenggelam")
+    # Tentukan kondisi dan target (lebih jauh supaya terlihat perbedaan)
+    if Fa > W:
+        kondisi = "terapung"
+        st.success("🟢 Terapung")
+        target = 220
+    elif Fa == W:
+        kondisi = "melayang"
+        st.info("🟡 Melayang")
+        target = 140
+    else:
+        kondisi = "tenggelam"
+        st.error("🔴 Tenggelam")
+        target = 60
 
-# Info gaya
-st.markdown(f"""
-<div class="card">
-Gaya Apung: <b>{Fa:.2f} N</b> <br>
-Berat Benda: <b>{W:.2f} N</b>
-Kondisi: <b>{kondisi}</b>
-</div>
-""", unsafe_allow_html=True)
+    # Info gaya
+    st.markdown(f"""
+    <div class="card">
+    Gaya Apung: <b>{Fa:.2f} N</b> <br>
+    Berat Benda: <b>{W:.2f} N</b>
+    </div>
+    """, unsafe_allow_html=True)
 
-# Autorefresh untuk animasi halus
-st_autorefresh(interval=50, limit=None, key="refresh")
+    import math
+    import time
 
-# Inisialisasi posisi
-if "posisi" not in st.session_state:
-    st.session_state.posisi = target
+    # Inisialisasi posisi balok
+    if "posisi" not in st.session_state:
+        st.session_state.posisi = target  # mulai di target
 
-# Hitung posisi balok + osilasi
-t = time.time()
-posisi = st.session_state.posisi
-# mendekati target (floating)
-posisi += (target - posisi) * 0.1
-# osilasi kecil agar bergerak halus
-posisi += 10 * math.sin(t * 3)
-st.session_state.posisi = posisi
+    placeholder = st.empty()
 
-# Render balok + air
-st.markdown(f"""
-<div style="
-    height:300px;
-    width:300px;
-    background:#cce7ff;
-    border-radius:15px;
-    position:relative;
-    overflow:hidden;
-    margin:auto;
-">
-    <!-- Air setengah kolam -->
+    # Osilasi kecil untuk efek naik-turun
+    t = time.time()
+    posisi = st.session_state.posisi
+    # smoothing ke target
+    posisi += (target - posisi) * 0.1
+    # tambahkan osilasi sinus untuk naik-turun
+    posisi += 15 * math.sin(t * 3)  # amplitude 15 px supaya terlihat jelas
+
+    st.session_state.posisi = posisi
+
+    # Render balok
+    placeholder.markdown(f"""
     <div style="
-        width:100%;
-        height:150px;
+        height:300px;
         background:#2563eb;
-        position:absolute;
-        bottom:0;
-        transition: height 0.2s linear;
-    "></div>
-
-    <!-- Balok coklat -->
-    <div style="
-        width:60px;
-        height:60px;
-        background:#8B4513;
-        position:absolute;
-        left:50%;
-        transform:translateX(-50%);
-        bottom:{posisi}px;
-        border-radius:5px;
-        box-shadow:0 5px 15px rgba(0,0,0,0.3);
-        transition: bottom 0.1s linear;
-    "></div>
-</div>
-""", unsafe_allow_html=True)
-
+        border-radius:15px;
+        position:relative;
+        overflow:hidden;
+    ">                         
+        <div style="
+            width:60px;
+            height:60px;
+            background:linear-gradient(145deg, #f87171, #ef4444);
+            position:absolute;
+            left:50%;
+            transform:translateX(-50%);
+            bottom:{posisi}px;
+            border-radius:15px;
+            box-shadow:0 10px 20px rgba(0,0,0,0.3);
+            transition: bottom 0.2s linear;
+        "></div> 
+    </div>
+    """, unsafe_allow_html=True)
 
 # =====================
 # GAME
