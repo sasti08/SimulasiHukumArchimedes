@@ -1,7 +1,70 @@
+import streamlit as st
+import time
+import math
+from streamlit_autorefresh import st_autorefresh
+
+st.set_page_config(page_title="Archimedes", page_icon="🌊", layout="centered")
+
+# =====================
+# STYLE (BIAR AESTHETIC)
+# =====================
+st.markdown("""
+<style>
+body {
+    background: #93c5fd;  /* Warna biru terang */
+}
+.block-container {
+    padding-top: 2rem;
+}
+.card {
+    background: white;
+    padding: 20px;
+    border-radius: 15px;
+    box-shadow: 0 10px 25px rgba(0,0,0,0.1);
+}
+</style>
+""", unsafe_allow_html=True)
+
+# =====================
+# NAVBAR
+# =====================
+menu = st.sidebar.radio("Menu", ["🏠 Home", "🌊 Simulasi", "🎮 Game", "📝 Latihan"])
+
+# =====================
+# HOME
+# =====================
+if menu == "🏠 Home":
+    st.title("🌊 Hukum Archimedes")
+    st.markdown("""
+    <div class="card">
+         <h3>📖 Pengertian</h3>
+    Hukum Archimedes adalah hukum yang menjelaskan bahwa suatu benda yang dicelupkan ke dalam fluida
+    akan mengalami gaya ke atas yang disebut gaya apung.
+         <br><br>
+         <h3>📜 Bunyi Hukum Archimedes</h3>
+    "Suatu benda yang dicelupkan sebagian atau seluruhnya ke dalam fluida akan mengalami gaya ke atas
+    sebesar berat fluida yang dipindahkannya."
+         <br><br>
+         <h3>📘 Rumus</h3>
+    Fa = ρ × g × V <br><br>
+         <b>Keterangan:</b><br>
+    ρ = massa jenis fluida <br>
+    g = percepatan gravitasi <br>
+    V = volume benda tercelup <br><br>
+         <b>Konsep:</b><br>
+    🟢 Fa > W → Terapung <br>
+    🟡 Fa = W → Melayang <br>
+    🔴 Fa < W → Tenggelam
+    </div>
+    """, unsafe_allow_html=True)
+
+# =====================
+# SIMULASI
+# =====================
 elif menu == "🌊 Simulasi":
     st.title("🌊 Simulasi Archimedes")
 
-    # Input manual
+    # Input angka manual
     rho = st.number_input("Massa jenis fluida (kg/m³)", value=1000.0, min_value=0.0, step=10.0)
     volume = st.number_input("Volume benda (m³)", value=1.0, min_value=0.0, step=0.1)
     massa = st.number_input("Massa benda (kg)", value=2.0, min_value=0.0, step=0.1)
@@ -34,8 +97,6 @@ elif menu == "🌊 Simulasi":
     """, unsafe_allow_html=True)
 
     # Autorefresh untuk animasi
-    from streamlit_autorefresh import st_autorefresh
-    import math, time
     st_autorefresh(interval=50, limit=None, key="refresh_sim")
 
     # Inisialisasi posisi balok
@@ -75,3 +136,60 @@ elif menu == "🌊 Simulasi":
         "></div> 
     </div>
     """, unsafe_allow_html=True)
+
+# =====================
+# GAME
+# =====================
+elif menu == "🎮 Game":
+    st.title("🎮 Hitung Gaya Apung")
+
+    # data soal
+    rho = 1400
+    V = 10
+    m = 10
+    g = 10
+
+    Fa = rho * g * V  # jawaban benar
+
+    st.markdown(f"""
+    <div class="card">
+    ρ = {rho} kg/m³ <br>
+    V = {V} m³ <br>
+    m = {m} kg <br><br>
+     <b>Pertanyaan:</b><br>
+    Berapa gaya apung benda? (N)
+    </div>
+    """, unsafe_allow_html=True)
+
+    # pilihan jawaban tetap dengan satuan N
+    pilihan = [f"{Fa} N", f"{Fa + 2000} N", f"{Fa - 2000} N"]
+
+    jawaban_user = st.radio("Pilih jawaban:", pilihan)
+
+    if st.button("Cek Jawaban"):
+        if jawaban_user == f"{Fa} N":
+            st.success("✅ Benar! 🎉")
+        else:
+            st.error(f"❌ Salah! Jawaban yang benar: {Fa} N")
+
+# =====================
+# LATIHAN
+# =====================
+elif menu == "📝 Latihan":
+    st.title("📝 Latihan Soal")
+
+    soal = [
+        {"q": "Fa > W maka?", "opsi": ["Tenggelam", "Terapung", "Hilang"], "jawab": "Terapung"},
+        {"q": "Fa = W maka?", "opsi": ["Melayang", "Terapung", "Jatuh"], "jawab": "Melayang"},
+        {"q": "Fa < W maka?", "opsi": ["Terapung", "Tenggelam", "Terbang"], "jawab": "Tenggelam"},
+    ]
+
+    skor = 0
+
+    for i, s in enumerate(soal):
+        jawab = st.radio(s["q"], s["opsi"], key=i)
+        if jawab == s["jawab"]:
+            skor += 1
+
+    if st.button("Lihat Skor"):
+        st.success(f"Skor kamu: {skor}/{len(soal)}")
