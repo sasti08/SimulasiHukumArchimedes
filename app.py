@@ -70,21 +70,24 @@ elif menu == "🌊 Simulasi":
     Fa = rho * g * volume
     W = massa * g
 
-    # Tentukan kondisi dan target (lebih jauh supaya terlihat perbedaan)
+    # Tentukan kondisi
     if Fa > W:
         kondisi = "terapung"
         st.success("🟢 Terapung")
+        # Balok di atas permukaan air
         target = 220
     elif Fa == W:
         kondisi = "melayang"
         st.info("🟡 Melayang")
+        # Balok di tengah air
         target = 140
     else:
         kondisi = "tenggelam"
         st.error("🔴 Tenggelam")
+        # Balok di bawah air
         target = 60
 
-    # Info gaya
+    # Card info gaya
     st.markdown(f"""
     <div class="card">
     Gaya Apung: <b>{Fa:.2f} N</b> <br>
@@ -95,31 +98,37 @@ elif menu == "🌊 Simulasi":
     import math
     import time
 
-    # Inisialisasi posisi balok
     if "posisi" not in st.session_state:
-        st.session_state.posisi = target  # mulai di target
+        st.session_state.posisi = target
 
     placeholder = st.empty()
 
-    # Osilasi kecil untuk efek naik-turun
+    # Smooth ke target + osilasi
     t = time.time()
     posisi = st.session_state.posisi
-    # smoothing ke target
     posisi += (target - posisi) * 0.1
-    # tambahkan osilasi sinus untuk naik-turun
-    posisi += 15 * math.sin(t * 3)  # amplitude 15 px supaya terlihat jelas
-
+    posisi += 10 * math.sin(t * 3)  # osilasi naik-turun
     st.session_state.posisi = posisi
 
-    # Render balok
+    # Render air + balok
     placeholder.markdown(f"""
     <div style="
         height:300px;
-        background:#2563eb;
+        background:#cce7ff;  /* warna air */
         border-radius:15px;
         position:relative;
         overflow:hidden;
-    ">                         
+    ">
+        <!-- Garis permukaan air setengah -->
+        <div style="
+            width:100%;
+            height:150px;  /* setengah kolam */
+            background:#2563eb;
+            position:absolute;
+            bottom:0;
+        "></div>
+
+        <!-- Balok -->
         <div style="
             width:60px;
             height:60px;
@@ -131,7 +140,7 @@ elif menu == "🌊 Simulasi":
             border-radius:15px;
             box-shadow:0 10px 20px rgba(0,0,0,0.3);
             transition: bottom 0.2s linear;
-        "></div> 
+        "></div>
     </div>
     """, unsafe_allow_html=True)
 
