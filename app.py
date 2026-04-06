@@ -1,7 +1,6 @@
 import streamlit as st
 import time
 import math
-from streamlit_autorefresh import st_autorefresh
 
 st.set_page_config(page_title="Archimedes", page_icon="🌊", layout="centered")
 
@@ -64,26 +63,25 @@ if menu == "🏠 Home":
 elif menu == "🌊 Simulasi":
     st.title("🌊 Simulasi Archimedes")
 
-    # Input angka manual
-    rho = st.number_input("Massa jenis fluida (kg/m³)", value=1000.0, min_value=0.0, step=10.0)
-    volume = st.number_input("Volume benda (m³)", value=1.0, min_value=0.0, step=0.1)
-    massa = st.number_input("Massa benda (kg)", value=2.0, min_value=0.0, step=0.1)
+    rho = st.slider("Massa jenis fluida (kg/m³)", 500, 1500, 1000)
+    volume = st.slider("Volume (m³)", 0.1, 5.0, 1.0)
+    massa = st.slider("Massa benda (kg)", 0.1, 10.0, 2.0)
 
     g = 9.8
     Fa = rho * g * volume
     W = massa * g
 
-    # Tentukan kondisi & target posisi balok
+    # Tentukan kondisi dan target
     if Fa > W:
-        kondisi = "Terapung"
+        kondisi = "terapung"
         st.success("🟢 Terapung")
         target = 150
     elif Fa == W:
-        kondisi = "Melayang"
+        kondisi = "melayang"
         st.info("🟡 Melayang")
         target = 80
     else:
-        kondisi = "Tenggelam"
+        kondisi = "tenggelam"
         st.error("🔴 Tenggelam")
         target = 10
 
@@ -91,48 +89,44 @@ elif menu == "🌊 Simulasi":
     st.markdown(f"""
     <div class="card">
     Gaya Apung: <b>{Fa:.2f} N</b> <br>
-    Berat Benda: <b>{W:.2f} N</b> <br>
-    Kondisi: <b>{kondisi}</b>
+    Berat Benda: <b>{W:.2f} N</b>
     </div>
     """, unsafe_allow_html=True)
 
-    # Autorefresh untuk animasi
-    st_autorefresh(interval=50, limit=None, key="refresh_sim")
-
     # Inisialisasi posisi balok
     if "posisi" not in st.session_state:
-        st.session_state.posisi = target
+        st.session_state.posisi = target  # mulai di target
 
-    # Hitung posisi balok dengan osilasi
-    t = time.time()
+    # Placeholder balok
+    placeholder = st.empty()
+
+    # Osilasi kecil untuk efek naik-turun
+    t = time.time()  # gunakan waktu sebagai parameter sinus
     posisi = st.session_state.posisi
-    posisi += (target - posisi) * 0.1       # smoothing ke target
-    posisi += 10 * math.sin(t * 3)          # osilasi halus
-    st.session_state.posisi = posisi
+    posisi += (target - posisi) * 0.1
+    posisi += 10 * math.sin(t * 3)  # 3 = kecepatan osilasi
+    st.session_state.posisi = posisi  # update posisi
 
-    # Render balok dan air
-    st.markdown(f"""
+    # Render balok
+    placeholder.markdown(f"""
     <div style="
         height:280px;
-        width:300px;
         background:#2563eb;
         border-radius:15px;
         position:relative;
         overflow:hidden;
-        margin:auto;
     ">                         
-        <!-- Balok coklat -->
         <div style="
             width:60px;
             height:60px;
-            background:#8B4513;
+            background:linear-gradient(145deg, #f87171, #ef4444);
             position:absolute;
             left:50%;
             transform:translateX(-50%);
             bottom:{posisi}px;
-            border-radius:10px;
+            border-radius:15px;
             box-shadow:0 10px 20px rgba(0,0,0,0.3);
-            transition: bottom 0.1s linear;
+            transition: bottom 0.2s linear;
         "></div> 
     </div>
     """, unsafe_allow_html=True)
