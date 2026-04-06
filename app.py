@@ -70,19 +70,19 @@ elif menu == "🌊 Simulasi":
     Fa = rho * g * volume
     W = massa * g
 
-    # Tentukan kondisi dan target
+    # Tentukan kondisi dan target (lebih jauh supaya terlihat perbedaan)
     if Fa > W:
         kondisi = "terapung"
         st.success("🟢 Terapung")
-        target = 150
+        target = 220
     elif Fa == W:
         kondisi = "melayang"
         st.info("🟡 Melayang")
-        target = 80
+        target = 140
     else:
         kondisi = "tenggelam"
         st.error("🔴 Tenggelam")
-        target = 10
+        target = 60
 
     # Info gaya
     st.markdown(f"""
@@ -99,24 +99,22 @@ elif menu == "🌊 Simulasi":
     if "posisi" not in st.session_state:
         st.session_state.posisi = target  # mulai di target
 
-    # Placeholder balok
     placeholder = st.empty()
 
     # Osilasi kecil untuk efek naik-turun
-    t = time.time()  # gunakan waktu sebagai parameter sinus
-
+    t = time.time()
     posisi = st.session_state.posisi
     # smoothing ke target
     posisi += (target - posisi) * 0.1
     # tambahkan osilasi sinus untuk naik-turun
-    posisi += 10 * math.sin(t * 3)  # 3 = kecepatan osilasi
+    posisi += 15 * math.sin(t * 3)  # amplitude 15 px supaya terlihat jelas
 
-    st.session_state.posisi = posisi  # update posisi
+    st.session_state.posisi = posisi
 
     # Render balok
     placeholder.markdown(f"""
     <div style="
-        height:280px;
+        height:300px;
         background:#2563eb;
         border-radius:15px;
         position:relative;
