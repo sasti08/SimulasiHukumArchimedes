@@ -63,8 +63,8 @@ elif menu == "🌊 Simulasi":
     st.title("🌊 Simulasi Archimedes")
 
     rho = st.slider("Massa jenis fluida (kg/m³)", 500, 1500, 1000)
-volume = st.slider("Volume (m³)", 0.1, 5.0, 1.0)
-massa = st.slider("Massa benda (kg)", 0.1, 10.0, 2.0)
+    volume = st.slider("Volume (m³)", 0.1, 5.0, 1.0)
+    massa = st.slider("Massa benda (kg)", 0.1, 10.0, 2.0)
 
 g = 9.8
 Fa = rho * g * volume
@@ -145,7 +145,8 @@ st.markdown(f"""
     "></div>
 </div>
 """, unsafe_allow_html=True)
-    
+
+
 # =====================
 # GAME
 # =====================
