@@ -10,7 +10,7 @@ st.set_page_config(page_title="Archimedes", page_icon="🌊", layout="centered")
 st.markdown("""
 <style>
 body {
-    background: linear-gradient(to right, #00bfff, #87cefa);  /* gradient biru laut aesthetic */
+    background: #93c5fd;  /* Warna biru terang */
 }
 .block-container {
     padding-top: 2rem;
@@ -39,26 +39,22 @@ if menu == "🏠 Home":
          <h3>📖 Pengertian</h3>
     Hukum Archimedes adalah hukum yang menjelaskan bahwa suatu benda yang dicelupkan ke dalam fluida
     akan mengalami gaya ke atas yang disebut gaya apung.
-    
          <br><br>
          <h3>📜 Bunyi Hukum Archimedes</h3>
     "Suatu benda yang dicelupkan sebagian atau seluruhnya ke dalam fluida akan mengalami gaya ke atas
     sebesar berat fluida yang dipindahkannya."
-    
          <br><br>
          <h3>📘 Rumus</h3>
     Fa = ρ × g × V <br><br>
-    
          <b>Keterangan:</b><br>
     ρ = massa jenis fluida <br>
     g = percepatan gravitasi <br>
     V = volume benda tercelup <br><br>
-    
          <b>Konsep:</b><br>
     🟢 Fa > W → Terapung <br>
     🟡 Fa = W → Melayang <br>
     🔴 Fa < W → Tenggelam
-    </div>
+         </div>
     """, unsafe_allow_html=True)
 
 # =====================
@@ -121,23 +117,23 @@ elif menu == "🌊 Simulasi":
             placeholder.markdown(f"""
             <div style="
                 height:280px;
-                background:linear-gradient(to top, #2563eb, #93c5fd);
+                background:#2563eb;  /* biru untuk simulasi */
                 border-radius:15px;
                 position:relative;
                 overflow:hidden;
-            "> 
-                     <div style="
-                width:60px;
-                height:60px;
-                background:linear-gradient(145deg, #f87171, #ef4444);
-                position:absolute;
-                left:50%;
-                transform:translateX(-50%);
-                bottom:{posisi}px;
-                border-radius:15px;
-                box-shadow:0 10px 20px rgba(0,0,0,0.3);
-            "></div>
-             </div>
+            ">                         
+                <div style="
+                    width:60px;
+                    height:60px;
+                    background:linear-gradient(145deg, #f87171, #ef4444);
+                    position:absolute;
+                    left:50%;
+                    transform:translateX(-50%);
+                    bottom:{posisi}px;
+                    border-radius:15px;
+                    box-shadow:0 10px 20px rgba(0,0,0,0.3);
+                "></div> 
+            </div>
             """, unsafe_allow_html=True)
 
             time.sleep(speed)
@@ -148,6 +144,7 @@ elif menu == "🌊 Simulasi":
 elif menu == "🎮 Game":
     st.title("🎮 Hitung Gaya Apung")
 
+    # data soal
     rho = 1400
     V = 10
     m = 10
@@ -160,12 +157,12 @@ elif menu == "🎮 Game":
     ρ = {rho} kg/m³ <br>
     V = {V} m³ <br>
     m = {m} kg <br><br>
-    
      <b>Pertanyaan:</b><br>
     Berapa gaya apung benda?
     </div>
     """, unsafe_allow_html=True)
 
+    # pilihan jawaban
     pilihan = [Fa, Fa + 2000, Fa - 2000]
     random.shuffle(pilihan)
 
