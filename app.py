@@ -1,6 +1,5 @@
 import streamlit as st
 import time
-import random
 
 st.set_page_config(page_title="Archimedes", page_icon="🌊", layout="centered")
 
@@ -54,7 +53,7 @@ if menu == "🏠 Home":
     🟢 Fa > W → Terapung <br>
     🟡 Fa = W → Melayang <br>
     🔴 Fa < W → Tenggelam
-         </div>
+    </div>
     """, unsafe_allow_html=True)
 
 # =====================
@@ -73,8 +72,8 @@ elif menu == "🌊 Simulasi":
 
     st.markdown(f"""
     <div class="card">
-    Gaya Apung: <b>{Fa:.2f}</b> <br>
-    Berat Benda: <b>{W:.2f}</b>
+    Gaya Apung: <b>{Fa:.2f} N</b> <br>
+    Berat Benda: <b>{W:.2f} N</b>
     </div>
     """, unsafe_allow_html=True)
 
@@ -117,7 +116,7 @@ elif menu == "🌊 Simulasi":
             placeholder.markdown(f"""
             <div style="
                 height:280px;
-                background:#2563eb;  /* biru untuk simulasi */
+                background:#2563eb;
                 border-radius:15px;
                 position:relative;
                 overflow:hidden;
@@ -158,18 +157,17 @@ elif menu == "🎮 Game":
     V = {V} m³ <br>
     m = {m} kg <br><br>
      <b>Pertanyaan:</b><br>
-    Berapa gaya apung benda?
+    Berapa gaya apung benda? (N)
     </div>
     """, unsafe_allow_html=True)
 
-    # pilihan jawaban
-    pilihan = [Fa, Fa + 2000, Fa - 2000]
-    random.shuffle(pilihan)
+    # pilihan jawaban tetap dengan satuan N
+    pilihan = [f"{Fa} N", f"{Fa + 2000} N", f"{Fa - 2000} N"]
 
     jawaban_user = st.radio("Pilih jawaban:", pilihan)
 
     if st.button("Cek Jawaban"):
-        if jawaban_user == Fa:
+        if jawaban_user == f"{Fa} N":
             st.success("✅ Benar! 🎉")
         else:
             st.error(f"❌ Salah! Jawaban yang benar: {Fa} N")
