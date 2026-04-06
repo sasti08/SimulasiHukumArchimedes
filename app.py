@@ -70,7 +70,7 @@ elif menu == "🌊 Simulasi":
     Fa = rho * g * volume
     W = massa * g
 
-    # Tentukan kondisi
+    # Tentukan kondisi dan target
     if Fa > W:
         kondisi = "terapung"
         st.success("🟢 Terapung")
@@ -84,7 +84,7 @@ elif menu == "🌊 Simulasi":
         st.error("🔴 Tenggelam")
         target = 10
 
-    # Card info gaya
+    # Info gaya
     st.markdown(f"""
     <div class="card">
     Gaya Apung: <b>{Fa:.2f} N</b> <br>
@@ -92,16 +92,28 @@ elif menu == "🌊 Simulasi":
     </div>
     """, unsafe_allow_html=True)
 
-    # Inisialisasi posisi bola
-    if "posisi" not in st.session_state:
-        st.session_state.posisi = 20
+    import math
+    import time
 
+    # Inisialisasi posisi balok
+    if "posisi" not in st.session_state:
+        st.session_state.posisi = target  # mulai di target
+
+    # Placeholder balok
     placeholder = st.empty()
 
-    # Update posisi bola smooth
-    st.session_state.posisi += (target - st.session_state.posisi) * 0.1
-    posisi = st.session_state.posisi
+    # Osilasi kecil untuk efek naik-turun
+    t = time.time()  # gunakan waktu sebagai parameter sinus
 
+    posisi = st.session_state.posisi
+    # smoothing ke target
+    posisi += (target - posisi) * 0.1
+    # tambahkan osilasi sinus untuk naik-turun
+    posisi += 10 * math.sin(t * 3)  # 3 = kecepatan osilasi
+
+    st.session_state.posisi = posisi  # update posisi
+
+    # Render balok
     placeholder.markdown(f"""
     <div style="
         height:280px;
