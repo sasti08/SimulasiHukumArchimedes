@@ -70,19 +70,19 @@ elif menu == "🌊 Simulasi":
     Fa = rho * g * volume
     W = massa * g
 
-    # Tentukan kondisi
+    # Tentukan kondisi dan target
     if Fa > W:
         kondisi = "terapung"
         st.success("🟢 Terapung")
-        target = 180
+        target = 150
     elif Fa == W:
         kondisi = "melayang"
         st.info("🟡 Melayang")
-        target = 90
+        target = 80
     else:
         kondisi = "tenggelam"
         st.error("🔴 Tenggelam")
-        target = 20
+        target = 10
 
     # Info gaya
     st.markdown(f"""
@@ -92,56 +92,50 @@ elif menu == "🌊 Simulasi":
     </div>
     """, unsafe_allow_html=True)
 
-    # Placeholder untuk balok
+    import math
+    import time
+
+    # Inisialisasi posisi balok
+    if "posisi" not in st.session_state:
+        st.session_state.posisi = target  # mulai di target
+
+    # Placeholder balok
     placeholder = st.empty()
 
-    if "posisi" not in st.session_state:
-        st.session_state.posisi = target
+    # Osilasi kecil untuk efek naik-turun
+    t = time.time()  # gunakan waktu sebagai parameter sinus
 
-    # =====================
-    # Simulasi bergerak (naik-turun + osilasi)
-    # =====================
-    while True:
-        t = time.time()
-        posisi = st.session_state.posisi
-        posisi += (target - posisi) * 0.1      # smoothing
-        posisi += 5 * math.sin(t * 3)         # osilasi halus
-        st.session_state.posisi = posisi
+    posisi = st.session_state.posisi
+    # smoothing ke target
+    posisi += (target - posisi) * 0.1
+    # tambahkan osilasi sinus untuk naik-turun
+    posisi += 10 * math.sin(t * 3)  # 3 = kecepatan osilasi
 
-        placeholder.markdown(f"""
+    st.session_state.posisi = posisi  # update posisi
+
+    # Render balok
+    placeholder.markdown(f"""
+    <div style="
+        height:280px;
+        background:#2563eb;
+        border-radius:15px;
+        position:relative;
+        overflow:hidden;
+    ">                         
         <div style="
-            height:300px;
-            background:#cce7ff;
+            width:60px;
+            height:60px;
+            background:linear-gradient(145deg, #f87171, #ef4444);
+            position:absolute;
+            left:50%;
+            transform:translateX(-50%);
+            bottom:{posisi}px;
             border-radius:15px;
-            position:relative;
-            overflow:hidden;
-        ">
-            <!-- Air setengah kolam -->
-            <div style="
-                width:100%;
-                height:150px;
-                background:#2563eb;
-                position:absolute;
-                bottom:0;
-            "></div>
-
-            <!-- Balok coklat -->
-            <div style="
-                width:60px;
-                height:60px;
-                background:#8B4513;
-                position:absolute;
-                left:50%;
-                transform:translateX(-50%);
-                bottom:{posisi}px;
-                border-radius:5px;
-                box-shadow:0 5px 15px rgba(0,0,0,0.3);
-                transition: bottom 0.2s linear;
-            "></div>
-        </div>
-        """, unsafe_allow_html=True)
-
-        time.sleep(0.05)  # kecepatan animasi
+            box-shadow:0 10px 20px rgba(0,0,0,0.3);
+            transition: bottom 0.2s linear;
+        "></div> 
+    </div>
+    """, unsafe_allow_html=True)
 
 # =====================
 # GAME
