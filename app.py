@@ -74,20 +74,17 @@ elif menu == "🌊 Simulasi":
     if Fa > W:
         kondisi = "terapung"
         st.success("🟢 Terapung")
-        # Balok di atas permukaan air
         target = 220
     elif Fa == W:
         kondisi = "melayang"
         st.info("🟡 Melayang")
-        # Balok di tengah air
         target = 140
     else:
         kondisi = "tenggelam"
         st.error("🔴 Tenggelam")
-        # Balok di bawah air
         target = 60
 
-    # Card info gaya
+    # Info gaya
     st.markdown(f"""
     <div class="card">
     Gaya Apung: <b>{Fa:.2f} N</b> <br>
@@ -95,55 +92,53 @@ elif menu == "🌊 Simulasi":
     </div>
     """, unsafe_allow_html=True)
 
-    import math
-    import time
+    import math, time
 
     if "posisi" not in st.session_state:
         st.session_state.posisi = target
 
     placeholder = st.empty()
 
-    # Smooth ke target + osilasi
+    # Posisi balok + osilasi
     t = time.time()
     posisi = st.session_state.posisi
     posisi += (target - posisi) * 0.1
-    posisi += 10 * math.sin(t * 3)  # osilasi naik-turun
+    posisi += 10 * math.sin(t * 3)
     st.session_state.posisi = posisi
 
-    # Render air + balok
+    # Render air setengah kolam + balok coklat
     placeholder.markdown(f"""
     <div style="
         height:300px;
-        background:#cce7ff;  /* warna air */
+        background:#cce7ff;
         border-radius:15px;
         position:relative;
         overflow:hidden;
     ">
-        <!-- Garis permukaan air setengah -->
+        <!-- Air setengah kolam -->
         <div style="
             width:100%;
-            height:150px;  /* setengah kolam */
+            height:150px;
             background:#2563eb;
             position:absolute;
             bottom:0;
         "></div>
 
-        <!-- Balok -->
+        <!-- Balok coklat -->
         <div style="
             width:60px;
             height:60px;
-            background:linear-gradient(145deg, #f87171, #ef4444);
+            background:#8B4513;  /* warna coklat kayu */
             position:absolute;
             left:50%;
             transform:translateX(-50%);
             bottom:{posisi}px;
-            border-radius:15px;
-            box-shadow:0 10px 20px rgba(0,0,0,0.3);
+            border-radius:5px;
+            box-shadow:0 5px 15px rgba(0,0,0,0.3);
             transition: bottom 0.2s linear;
         "></div>
     </div>
     """, unsafe_allow_html=True)
-
 # =====================
 # GAME
 # =====================
