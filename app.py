@@ -71,20 +71,6 @@ elif menu == "🌊 Simulasi":
     Fa = rho * g * volume
     W = massa * g
 
-    # Tentukan kondisi & target posisi
-    if Fa > W:
-        kondisi = "Terapung"
-        warna = "#16a34a"
-        target = 180
-    elif Fa == W:
-        kondisi = "Melayang"
-        warna = "#eab308"
-        target = 90
-    else:
-        kondisi = "Tenggelam"
-        warna = "#dc2626"
-        target = 20
-
     # Info gaya
     st.markdown(f"""
     <div class="card">
@@ -93,79 +79,68 @@ elif menu == "🌊 Simulasi":
     </div>
     """, unsafe_allow_html=True)
 
-    # Tombol Start
+    # Tombol start
     start = st.button("▶️ Start Simulasi")
 
-    if "posisi" not in st.session_state:
-        st.session_state.posisi = 20
-
-    placeholder = st.empty()
-
     if start:
-        for _ in range(80):
-            t = time.time()
+        # Tentukan posisi langsung (tanpa animasi)
+        if Fa > W:
+            posisi = 180
+            label = "🟢 Terapung"
+        elif Fa == W:
+            posisi = 90
+            label = "🟡 Melayang"
+        else:
+            posisi = 20
+            label = "🔴 Tenggelam"
 
-            posisi = st.session_state.posisi
-            posisi += (target - posisi) * 0.1
-            posisi += 8 * math.sin(t * 3)
-            st.session_state.posisi = posisi
+        # Render langsung
+        st.markdown(f"""
+        <div style="
+            height:300px;
+            background:#cce7ff;
+            border-radius:15px;
+            position:relative;
+            overflow:hidden;
+        ">
 
-            # Tentukan label berdasarkan posisi
-            if posisi > 150:
-                label = "🟢 Terapung"
-            elif posisi > 70:
-                label = "🟡 Melayang"
-            else:
-                label = "🔴 Tenggelam"
-
-            placeholder.markdown(f"""
+            <!-- Air setengah -->
             <div style="
-                height:300px;
-                background:#cce7ff;
-                border-radius:15px;
-                position:relative;
-                overflow:hidden;
+                width:100%;
+                height:150px;
+                background:#2563eb;
+                position:absolute;
+                bottom:0;
+            "></div>
+
+            <!-- Label -->
+            <div style="
+                position:absolute;
+                top:10px;
+                left:50%;
+                transform:translateX(-50%);
+                font-weight:bold;
+                color:white;
+                font-size:18px;
             ">
-
-                <!-- Air setengah -->
-                <div style="
-                    width:100%;
-                    height:150px;
-                    background:#2563eb;
-                    position:absolute;
-                    bottom:0;
-                "></div>
-
-                <!-- Label posisi -->
-                <div style="
-                    position:absolute;
-                    top:10px;
-                    left:50%;
-                    transform:translateX(-50%);
-                    font-weight:bold;
-                    color:white;
-                    font-size:18px;
-                ">
-                    {label}
-                </div>
-
-                <!-- Balok coklat -->
-                <div style="
-                    width:60px;
-                    height:60px;
-                    background:#8B4513;
-                    position:absolute;
-                    left:50%;
-                    transform:translateX(-50%);
-                    bottom:{posisi}px;
-                    border-radius:5px;
-                    box-shadow:0 10px 20px rgba(0,0,0,0.3);
-                "></div>
-
+                {label}
             </div>
-            """, unsafe_allow_html=True)
 
-            time.sleep(0.05)
+            <!-- Balok coklat -->
+            <div style="
+                width:60px;
+                height:60px;
+                background:#8B4513;
+                position:absolute;
+                left:50%;
+                transform:translateX(-50%);
+                bottom:{posisi}px;
+                border-radius:5px;
+                box-shadow:0 10px 20px rgba(0,0,0,0.3);
+            "></div>
+
+        </div>
+        """, unsafe_allow_html=True)
 
 # =====================
 # GAME
