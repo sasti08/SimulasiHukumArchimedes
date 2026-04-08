@@ -71,19 +71,19 @@ elif menu == "🌊 Simulasi":
     Fa = rho * g * volume
     W = massa * g
 
-    # Tentukan kondisi dan target
+    # Tentukan kondisi & target posisi
     if Fa > W:
-        kondisi = "terapung"
-        st.success("🟢 Terapung")
-        target = 150
+        kondisi = "Terapung"
+        warna = "#16a34a"
+        target = 180
     elif Fa == W:
-        kondisi = "melayang"
-        st.info("🟡 Melayang")
-        target = 80
+        kondisi = "Melayang"
+        warna = "#eab308"
+        target = 90
     else:
-        kondisi = "tenggelam"
-        st.error("🔴 Tenggelam")
-        target = 10
+        kondisi = "Tenggelam"
+        warna = "#dc2626"
+        target = 20
 
     # Info gaya
     st.markdown(f"""
@@ -96,30 +96,60 @@ elif menu == "🌊 Simulasi":
     # Tombol Start
     start = st.button("▶️ Start Simulasi")
 
-    # Inisialisasi posisi
     if "posisi" not in st.session_state:
         st.session_state.posisi = 20
 
     placeholder = st.empty()
 
-    # Animasi hanya jalan kalau tombol ditekan
     if start:
         for _ in range(80):
             t = time.time()
 
             posisi = st.session_state.posisi
-            posisi += (target - posisi) * 0.1   # smooth ke target
-            posisi += 8 * math.sin(t * 3)      # osilasi naik-turun
+            posisi += (target - posisi) * 0.1
+            posisi += 8 * math.sin(t * 3)
             st.session_state.posisi = posisi
+
+            # Tentukan label berdasarkan posisi
+            if posisi > 150:
+                label = "🟢 Terapung"
+            elif posisi > 70:
+                label = "🟡 Melayang"
+            else:
+                label = "🔴 Tenggelam"
 
             placeholder.markdown(f"""
             <div style="
-                height:280px;
-                background:#2563eb;
+                height:300px;
+                background:#cce7ff;
                 border-radius:15px;
                 position:relative;
                 overflow:hidden;
-            ">                         
+            ">
+
+                <!-- Air setengah -->
+                <div style="
+                    width:100%;
+                    height:150px;
+                    background:#2563eb;
+                    position:absolute;
+                    bottom:0;
+                "></div>
+
+                <!-- Label posisi -->
+                <div style="
+                    position:absolute;
+                    top:10px;
+                    left:50%;
+                    transform:translateX(-50%);
+                    font-weight:bold;
+                    color:white;
+                    font-size:18px;
+                ">
+                    {label}
+                </div>
+
+                <!-- Balok coklat -->
                 <div style="
                     width:60px;
                     height:60px;
@@ -130,7 +160,8 @@ elif menu == "🌊 Simulasi":
                     bottom:{posisi}px;
                     border-radius:5px;
                     box-shadow:0 10px 20px rgba(0,0,0,0.3);
-                "></div> 
+                "></div>
+
             </div>
             """, unsafe_allow_html=True)
 
