@@ -61,124 +61,68 @@ if menu == "🏠 Home":
 # SIMULASI
 # =====================
 elif menu == "🌊 Simulasi":
-    st.title("🌊 Simulasi Archimedes")
+    st.title("🌊 Simulasi Hukum Archimedes")
 
-    rho = st.slider("Massa jenis fluida", 500, 1500, 1000)
-    volume = st.slider("Volume", 0.1, 5.0, 1.0)
-    massa = st.slider("Massa", 0.1, 10.0, 2.0)
+    # Input manual
+    Fa = st.number_input("Masukkan Gaya Apung (Fa)", 0.0, 10000.0, 100.0)
+    W = st.number_input("Masukkan Berat Benda (W)", 0.0, 10000.0, 200.0)
 
-    g = 9.8
-    Fa = rho * g * volume
-    W = massa * g
-
-    # Tentukan kondisi & target
+    # Tentukan kondisi & posisi
     if Fa > W:
-        st.success("🟢 Terapung")
-        target = 180
+        kondisi = "🟢 Terapung"
+        posisi = 180   # atas
     elif Fa == W:
-        st.info("🟡 Melayang")
-        target = 100
+        kondisi = "🟡 Melayang"
+        posisi = 100   # tengah
     else:
-        st.error("🔴 Tenggelam")
-        target = 20
+        kondisi = "🔴 Tenggelam"
+        posisi = 20    # bawah
 
-    # Info gaya
+    st.write(f"**Kondisi: {kondisi}**")
+
+    # TAMPILAN
     st.markdown(f"""
-    <div class="card">
-    Gaya Apung: <b>{Fa:.2f} N</b><br>
-    Berat Benda: <b>{W:.2f} N</b>
+    <div style="
+        height:300px;
+        background:#e0f2fe;
+        border-radius:15px;
+        position:relative;
+        overflow:hidden;
+    ">
+
+        <!-- AIR SETENGAH -->
+        <div style="
+            position:absolute;
+            bottom:0;
+            width:100%;
+            height:150px;
+            background:#2563eb;
+        "></div>
+
+        <!-- GARIS PERMUKAAN -->
+        <div style="
+            position:absolute;
+            bottom:150px;
+            width:100%;
+            height:2px;
+            background:white;
+        "></div>
+
+        <!-- BALOK COKLAT -->
+        <div style="
+            width:60px;
+            height:60px;
+            background:#8B4513;
+            position:absolute;
+            left:50%;
+            transform:translateX(-50%);
+            bottom:{posisi}px;
+            border-radius:5px;
+            box-shadow:0 10px 20px rgba(0,0,0,0.3);
+        "></div>
+
     </div>
     """, unsafe_allow_html=True)
-
-    # Tombol start
-    start = st.button("▶️ Start Simulasi")
-
-    # posisi awal
-    if "posisi" not in st.session_state:
-        st.session_state.posisi = 50
-
-    placeholder = st.empty()
-
-    # =====================
-    # ANIMASI (INI YANG KAMU MAU)
-    # =====================
-    if start:
-        for _ in range(80):
-            t = time.time()
-
-            posisi = st.session_state.posisi
-
-            # gerak ke target
-            posisi += (target - posisi) * 0.15
-
-            # osilasi kecil
-            posisi += 6 * math.sin(t * 3)
-
-            st.session_state.posisi = posisi
-
-            # label posisi
-            if posisi > 150:
-                label = "🟢 Terapung"
-            elif posisi > 70:
-                label = "🟡 Melayang"
-            else:
-                label = "🔴 Tenggelam"
-
-            placeholder.markdown(f"""
-            <div style="
-                height:300px;
-                background:#e0f2fe;
-                border-radius:15px;
-                position:relative;
-                overflow:hidden;
-            ">
-
-                <!-- AIR SETENGAH -->
-                <div style="
-                    position:absolute;
-                    bottom:0;
-                    width:100%;
-                    height:150px;
-                    background:#2563eb;
-                "></div>
-
-                <!-- GARIS AIR -->
-                <div style="
-                    position:absolute;
-                    bottom:150px;
-                    width:100%;
-                    height:2px;
-                    background:white;
-                "></div>
-
-                <!-- LABEL -->
-                <div style="
-                    position:absolute;
-                    top:10px;
-                    left:50%;
-                    transform:translateX(-50%);
-                    font-weight:bold;
-                ">
-                    {label}
-                </div>
-
-                <!-- BALOK -->
-                <div style="
-                    width:60px;
-                    height:60px;
-                    background:#8B4513;
-                    position:absolute;
-                    left:50%;
-                    transform:translateX(-50%);
-                    bottom:{posisi}px;
-                    border-radius:5px;
-                    box-shadow:0 10px 20px rgba(0,0,0,0.3);
-                "></div>
-
-            </div>
-            """, unsafe_allow_html=True)
-
-    time.sleep(0.05)
 
 # =====================
 # GAME
