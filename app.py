@@ -125,61 +125,56 @@ elif menu == "🌊 Simulasi":
                 label = "🔴 Tenggelam"
 
             placeholder.markdown(f"""
-            <div style="
-                height:300px;
-                background:#e0f2fe;
-                border-radius:15px;
-                position:relative;
-                overflow:hidden;
-            ">
+<div style="
+    height:300px;
+    background:#e0f2fe;
+    border-radius:15px;
+    position:relative;
+    overflow:hidden;
+">
 
-                <!-- AIR SETENGAH -->
-                <div style="
-                    width:100%;
-                    height:150px;
-                    background:#2563eb;
-                    position:absolute;
-                    bottom:0;
-                "></div>
+    <div style="
+        width:100%;
+        height:150px;
+        background:#2563eb;
+        position:absolute;
+        bottom:0;
+    "></div>
 
-                <!-- GARIS AIR -->
-                <div style="
-                    position:absolute;
-                    bottom:150px;
-                    width:100%;
-                    height:3px;
-                    background:white;
-                "></div>
+    <div style="
+        position:absolute;
+        bottom:150px;
+        width:100%;
+        height:3px;
+        background:white;
+    "></div>
 
-                <!-- LABEL -->
-                <div style="
-                    position:absolute;
-                    top:10px;
-                    left:50%;
-                    transform:translateX(-50%);
-                    font-weight:bold;
-                    font-size:18px;
-                ">
-                    {label}
-                </div>
+    <div style="
+        position:absolute;
+        top:10px;
+        left:50%;
+        transform:translateX(-50%);
+        font-weight:bold;
+        font-size:18px;
+        color:black;
+    ">
+        {label}
+    </div>
 
-                <!-- BALOK -->
-                <div style="
-                    width:60px;
-                    height:60px;
-                    background:#8B4513;
-                    position:absolute;
-                    left:50%;
-                    transform:translateX(-50%);
-                    bottom:{posisi}px;
-                    border-radius:5px;
-                    box-shadow:0 10px 20px rgba(0,0,0,0.3);
-                "></div>
+    <div style="
+        width:60px;
+        height:60px;
+        background:#8B4513;
+        position:absolute;
+        left:50%;
+        transform:translateX(-50%);
+        bottom:{posisi}px;
+        border-radius:5px;
+        box-shadow:0 10px 20px rgba(0,0,0,0.3);
+    "></div>
 
-            </div>
-            """, unsafe_allow_html=True)
-
-            time.sleep(0.05)
+</div>
+""", unsafe_allow_html=True)
 
 # =====================
 # GAME
