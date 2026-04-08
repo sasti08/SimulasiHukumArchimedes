@@ -69,16 +69,14 @@ elif menu == "🌊 Simulasi":
     # STATE
     if "y" not in st.session_state:
         st.session_state.y = 120
+
     if "status" not in st.session_state:
         st.session_state.status = ""
 
-    start = st.button("▶️ Simulasikan")
-
-    if start:
-        # reset posisi
+    # Tombol
+    if st.button("▶️ Simulasikan"):
         st.session_state.y = 120
 
-        # tentukan kondisi
         if rho_benda < rho_fluida:
             st.session_state.status = "Terapung 🟢"
         elif rho_benda == rho_fluida:
@@ -86,74 +84,68 @@ elif menu == "🌊 Simulasi":
         else:
             st.session_state.status = "Tenggelam 🔴"
 
-    st.write(f"Status: **{st.session_state.status}**")
+    status = st.session_state.status
+    y = st.session_state.y
 
-    placeholder = st.empty()
+    # GERAKAN (1 step tiap klik)
+    if "Terapung" in status and y > 60:
+        y -= 10
+    elif "Tenggelam" in status and y < 200:
+        y += 10
+    elif "Melayang" in status:
+        if y < 120:
+            y += 5
+        elif y > 120:
+            y -= 5
 
-    # =====================
-    # ANIMASI
-    # =====================
-    for _ in range(80):
-        y = st.session_state.y
-        status = st.session_state.status
+    st.session_state.y = y
 
-        # GERAKAN
-        if "Terapung" in status and y > 60:
-            y -= 2
-        elif "Tenggelam" in status and y < 200:
-            y += 2
-        elif "Melayang" in status:
-            if y < 120:
-                y += 1
-            elif y > 120:
-                y -= 1
+    # STATUS
+    st.write(f"Status: **{status}**")
 
-        st.session_state.y = y
+    # RENDER (PASTI MUNCUL)
+    st.markdown(f"""
+    <div style="
+        height:300px;
+        background:#e0f2fe;
+        border-radius:15px;
+        position:relative;
+        overflow:hidden;
+    ">
 
-        placeholder.markdown(f"""
+        <!-- AIR SETENGAH -->
         <div style="
-            height:300px;
-            background:#e0f2fe;
-            border-radius:15px;
-            position:relative;
-            overflow:hidden;
-        ">
+            position:absolute;
+            bottom:0;
+            width:100%;
+            height:150px;
+            background:#2563eb;
+        "></div>
 
-            <!-- AIR SETENGAH -->
-            <div style="
-                position:absolute;
-                bottom:0;
-                width:100%;
-                height:150px;
-                background:#2563eb;
-            "></div>
+        <!-- GARIS AIR -->
+        <div style="
+            position:absolute;
+            bottom:150px;
+            width:100%;
+            height:2px;
+            background:white;
+        "></div>
 
-            <!-- GARIS PERMUKAAN -->
-            <div style="
-                position:absolute;
-                bottom:150px;
-                width:100%;
-                height:2px;
-                background:white;
-            "></div>
+        <!-- BALOK -->
+        <div style="
+            width:60px;
+            height:60px;
+            background:#8B4513;
+            position:absolute;
+            left:50%;
+            transform:translateX(-50%);
+            bottom:{y}px;
+            border-radius:5px;
+            box-shadow:0 10px 20px rgba(0,0,0,0.3);
+        "></div>
 
-            <!-- BALOK -->
-            <div style="
-                width:60px;
-                height:60px;
-                background:#8B4513;
-                position:absolute;
-                left:50%;
-                transform:translateX(-50%);
-                bottom:{y}px;
-                border-radius:5px;
-                box-shadow:0 10px 20px rgba(0,0,0,0.3);
-            "></div>
-
-        </div>
-        """, unsafe_allow_html=True)
-
-        time.sleep(0.05)
+    </div>
+    """, unsafe_allow_html=True)
 
 # =====================
 # GAME
