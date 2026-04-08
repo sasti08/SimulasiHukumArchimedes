@@ -63,89 +63,120 @@ if menu == "🏠 Home":
 elif menu == "🌊 Simulasi":
     st.title("🌊 Simulasi Archimedes")
 
-    rho_benda = st.number_input("Massa jenis benda", 1.0, 2000.0, 500.0)
-    rho_fluida = st.number_input("Massa jenis fluida", 1.0, 2000.0, 1000.0)
+    rho = st.slider("Massa jenis fluida", 500, 1500, 1000)
+    volume = st.slider("Volume", 0.1, 5.0, 1.0)
+    massa = st.slider("Massa", 0.1, 10.0, 2.0)
 
-    # STATE
-    if "y" not in st.session_state:
-        st.session_state.y = 120
+    g = 9.8
+    Fa = rho * g * volume
+    W = massa * g
 
-    if "status" not in st.session_state:
-        st.session_state.status = ""
+    # Tentukan kondisi & target
+    if Fa > W:
+        st.success("🟢 Terapung")
+        target = 180
+    elif Fa == W:
+        st.info("🟡 Melayang")
+        target = 100
+    else:
+        st.error("🔴 Tenggelam")
+        target = 20
 
-    # Tombol
-    if st.button("▶️ Simulasikan"):
-        st.session_state.y = 120
-
-        if rho_benda < rho_fluida:
-            st.session_state.status = "Terapung 🟢"
-        elif rho_benda == rho_fluida:
-            st.session_state.status = "Melayang 🟡"
-        else:
-            st.session_state.status = "Tenggelam 🔴"
-
-    status = st.session_state.status
-    y = st.session_state.y
-
-    # GERAKAN (1 step tiap klik)
-    if "Terapung" in status and y > 60:
-        y -= 10
-    elif "Tenggelam" in status and y < 200:
-        y += 10
-    elif "Melayang" in status:
-        if y < 120:
-            y += 5
-        elif y > 120:
-            y -= 5
-
-    st.session_state.y = y
-
-    # STATUS
-    st.write(f"Status: **{status}**")
-
-    # RENDER (PASTI MUNCUL)
+    # Info gaya
     st.markdown(f"""
-    <div style="
-        height:300px;
-        background:#e0f2fe;
-        border-radius:15px;
-        position:relative;
-        overflow:hidden;
-    ">
-
-        <!-- AIR SETENGAH -->
-        <div style="
-            position:absolute;
-            bottom:0;
-            width:100%;
-            height:150px;
-            background:#2563eb;
-        "></div>
-
-        <!-- GARIS AIR -->
-        <div style="
-            position:absolute;
-            bottom:150px;
-            width:100%;
-            height:2px;
-            background:white;
-        "></div>
-
-        <!-- BALOK -->
-        <div style="
-            width:60px;
-            height:60px;
-            background:#8B4513;
-            position:absolute;
-            left:50%;
-            transform:translateX(-50%);
-            bottom:{y}px;
-            border-radius:5px;
-            box-shadow:0 10px 20px rgba(0,0,0,0.3);
-        "></div>
-
+    <div class="card">
+    Gaya Apung: <b>{Fa:.2f} N</b><br>
+    Berat Benda: <b>{W:.2f} N</b>
     </div>
     """, unsafe_allow_html=True)
+
+    # Tombol start
+    start = st.button("▶️ Start Simulasi")
+
+    # posisi awal
+    if "posisi" not in st.session_state:
+        st.session_state.posisi = 50
+
+    placeholder = st.empty()
+
+    # =====================
+    # ANIMASI (INI YANG KAMU MAU)
+    # =====================
+    if start:
+        for _ in range(80):
+            t = time.time()
+
+            posisi = st.session_state.posisi
+
+            # gerak ke target
+            posisi += (target - posisi) * 0.15
+
+            # osilasi kecil
+            posisi += 6 * math.sin(t * 3)
+
+            st.session_state.posisi = posisi
+
+            # label posisi
+            if posisi > 150:
+                label = "🟢 Terapung"
+            elif posisi > 70:
+                label = "🟡 Melayang"
+            else:
+                label = "🔴 Tenggelam"
+
+            placeholder.markdown(f"""
+            <div style="
+                height:300px;
+                background:#e0f2fe;
+                border-radius:15px;
+                position:relative;
+                overflow:hidden;
+            ">
+
+                <!-- AIR SETENGAH -->
+                <div style="
+                    position:absolute;
+                    bottom:0;
+                    width:100%;
+                    height:150px;
+                    background:#2563eb;
+                "></div>
+
+                <!-- GARIS AIR -->
+                <div style="
+                    position:absolute;
+                    bottom:150px;
+                    width:100%;
+                    height:2px;
+                    background:white;
+                "></div>
+
+                <!-- LABEL -->
+                <div style="
+                    position:absolute;
+                    top:10px;
+                    left:50%;
+                    transform:translateX(-50%);
+                    font-weight:bold;
+                ">
+                    {label}
+                </div>
+
+                <!-- BALOK -->
+                <div style="
+                    width:60px;
+                    height:60px;
+                    background:#8B4513;
+                    position:absolute;
+                    left:50%;
+                    transform:translateX(-50%);
+                    bottom:{posisi}px;
+                    border-radius:5px;
+                    box-shadow:0 10px 20px rgba(0,0,0,0.3);
+                "></div>
+
+            </div>
+            """, unsafe_allow_html=True)
 
 # =====================
 # GAME
