@@ -61,26 +61,34 @@ if menu == "🏠 Home":
 # SIMULASI
 # =====================
 elif menu == "🌊 Simulasi":
-    st.title("🌊 Simulasi Hukum Archimedes")
+    st.title("🌊 Simulasi Sederhana Archimedes")
 
-    # Input manual
-    Fa = st.number_input("Masukkan Gaya Apung (Fa)", 0.0, 10000.0, 100.0)
-    W = st.number_input("Masukkan Berat Benda (W)", 0.0, 10000.0, 200.0)
+    st.write("Masukkan nilai:")
 
-    # Tentukan kondisi & posisi
-    if Fa > W:
-        kondisi = "🟢 Terapung"
-        posisi = 180   # atas
-    elif Fa == W:
+    # INPUT MANUAL DARI 0
+    massa_benda = st.number_input("Massa benda", 0.0, 10000.0, 0.0)
+    massa_jenis_air = st.number_input("Massa jenis air", 0.0, 10000.0, 0.0)
+
+    Fa = st.number_input("Gaya apung (Fa)", 0.0, 10000.0, 0.0)
+    W = st.number_input("Berat benda (W)", 0.0, 10000.0, 0.0)
+
+    # KONDISI
+    kondisi = "-"
+    posisi = 20  # default bawah
+
+    if Fa == W and Fa != 0:
         kondisi = "🟡 Melayang"
-        posisi = 100   # tengah
-    else:
+        posisi = 100
+    elif massa_benda < massa_jenis_air and massa_benda != 0:
+        kondisi = "🟢 Terapung"
+        posisi = 180
+    elif massa_benda > massa_jenis_air:
         kondisi = "🔴 Tenggelam"
-        posisi = 20    # bawah
+        posisi = 20
 
     st.write(f"**Kondisi: {kondisi}**")
 
-    # TAMPILAN
+    # VISUAL
     st.markdown(f"""
     <div style="
         height:300px;
@@ -99,7 +107,7 @@ elif menu == "🌊 Simulasi":
             background:#2563eb;
         "></div>
 
-        <!-- GARIS PERMUKAAN -->
+        <!-- GARIS AIR -->
         <div style="
             position:absolute;
             bottom:150px;
