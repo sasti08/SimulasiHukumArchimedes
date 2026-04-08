@@ -93,43 +93,48 @@ elif menu == "🌊 Simulasi":
     </div>
     """, unsafe_allow_html=True)
 
-    # Inisialisasi posisi balok
-    if "posisi" not in st.session_state:
-        st.session_state.posisi = target  # mulai di target
+    # Tombol Start
+    start = st.button("▶️ Start Simulasi")
 
-    # Placeholder balok
+    # Inisialisasi posisi
+    if "posisi" not in st.session_state:
+        st.session_state.posisi = 20
+
     placeholder = st.empty()
 
-    # Osilasi kecil untuk efek naik-turun
-    t = time.time()  # gunakan waktu sebagai parameter sinus
-    posisi = st.session_state.posisi
-    posisi += (target - posisi) * 0.1
-    posisi += 10 * math.sin(t * 3)  # 3 = kecepatan osilasi
-    st.session_state.posisi = posisi  # update posisi
+    # Animasi hanya jalan kalau tombol ditekan
+    if start:
+        for _ in range(80):
+            t = time.time()
 
-    # Render balok
-    placeholder.markdown(f"""
-    <div style="
-        height:280px;
-        background:#2563eb;
-        border-radius:15px;
-        position:relative;
-        overflow:hidden;
-    ">                         
-        <div style="
-            width:60px;
-            height:60px;
-            background:linear-gradient(145deg, #f87171, #ef4444);
-            position:absolute;
-            left:50%;
-            transform:translateX(-50%);
-            bottom:{posisi}px;
-            border-radius:15px;
-            box-shadow:0 10px 20px rgba(0,0,0,0.3);
-            transition: bottom 0.2s linear;
-        "></div> 
-    </div>
-    """, unsafe_allow_html=True)
+            posisi = st.session_state.posisi
+            posisi += (target - posisi) * 0.1   # smooth ke target
+            posisi += 8 * math.sin(t * 3)      # osilasi naik-turun
+            st.session_state.posisi = posisi
+
+            placeholder.markdown(f"""
+            <div style="
+                height:280px;
+                background:#2563eb;
+                border-radius:15px;
+                position:relative;
+                overflow:hidden;
+            ">                         
+                <div style="
+                    width:60px;
+                    height:60px;
+                    background:#8B4513;
+                    position:absolute;
+                    left:50%;
+                    transform:translateX(-50%);
+                    bottom:{posisi}px;
+                    border-radius:5px;
+                    box-shadow:0 10px 20px rgba(0,0,0,0.3);
+                "></div> 
+            </div>
+            """, unsafe_allow_html=True)
+
+            time.sleep(0.05)
 
 # =====================
 # GAME
