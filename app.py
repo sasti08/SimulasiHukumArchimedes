@@ -63,118 +63,97 @@ if menu == "🏠 Home":
 elif menu == "🌊 Simulasi":
     st.title("🌊 Simulasi Archimedes")
 
-    rho = st.slider("Massa jenis fluida (kg/m³)", 500, 1500, 1000)
-    volume = st.slider("Volume (m³)", 0.1, 5.0, 1.0)
-    massa = st.slider("Massa benda (kg)", 0.1, 10.0, 2.0)
+    rho_benda = st.number_input("Massa jenis benda", 1.0, 2000.0, 500.0)
+    rho_fluida = st.number_input("Massa jenis fluida", 1.0, 2000.0, 1000.0)
 
-    g = 9.8
-    Fa = rho * g * volume
-    W = massa * g
+    # STATE
+    if "y" not in st.session_state:
+        st.session_state.y = 120
+    if "status" not in st.session_state:
+        st.session_state.status = ""
 
-    st.markdown(f"""
-    <div class="card">
-    Gaya Apung: <b>{Fa:.2f} N</b> <br>
-    Berat Benda: <b>{W:.2f} N</b>
-    </div>
-    """, unsafe_allow_html=True)
+    start = st.button("▶️ Simulasikan")
 
-    # =====================
-    # STATE START
-    # =====================
-    if "start_simulasi" not in st.session_state:
-        st.session_state.start_simulasi = False
+    if start:
+        # reset posisi
+        st.session_state.y = 120
 
-    if st.button("▶️ Start Simulasi"):
-        st.session_state.start_simulasi = True
+        # tentukan kondisi
+        if rho_benda < rho_fluida:
+            st.session_state.status = "Terapung 🟢"
+        elif rho_benda == rho_fluida:
+            st.session_state.status = "Melayang 🟡"
+        else:
+            st.session_state.status = "Tenggelam 🔴"
 
-    # Tentukan target posisi
-    if Fa > W:
-        target = 180
-    elif Fa == W:
-        target = 90
-    else:
-        target = 20
-
-    if "posisi" not in st.session_state:
-        st.session_state.posisi = 20
+    st.write(f"Status: **{st.session_state.status}**")
 
     placeholder = st.empty()
 
     # =====================
     # ANIMASI
     # =====================
-    if st.session_state.start_simulasi:
-        for _ in range(60):
-            t = time.time()
+    for _ in range(80):
+        y = st.session_state.y
+        status = st.session_state.status
 
-            posisi = st.session_state.posisi
-            posisi += (target - posisi) * 0.15
+        # GERAKAN
+        if "Terapung" in status and y > 60:
+            y -= 2
+        elif "Tenggelam" in status and y < 200:
+            y += 2
+        elif "Melayang" in status:
+            if y < 120:
+                y += 1
+            elif y > 120:
+                y -= 1
 
-            # osilasi kecil
-            if abs(target - posisi) < 5:
-                posisi += 5 * math.sin(t * 3)
+        st.session_state.y = y
 
-            st.session_state.posisi = posisi
+        placeholder.markdown(f"""
+        <div style="
+            height:300px;
+            background:#e0f2fe;
+            border-radius:15px;
+            position:relative;
+            overflow:hidden;
+        ">
 
-            # Label dinamis
-            if posisi > 150:
-                label = "🟢 Terapung"
-            elif posisi > 70:
-                label = "🟡 Melayang"
-            else:
-                label = "🔴 Tenggelam"
+            <!-- AIR SETENGAH -->
+            <div style="
+                position:absolute;
+                bottom:0;
+                width:100%;
+                height:150px;
+                background:#2563eb;
+            "></div>
 
-            placeholder.markdown(f"""
-<div style="
-    height:300px;
-    background:#e0f2fe;
-    border-radius:15px;
-    position:relative;
-    overflow:hidden;
-">
+            <!-- GARIS PERMUKAAN -->
+            <div style="
+                position:absolute;
+                bottom:150px;
+                width:100%;
+                height:2px;
+                background:white;
+            "></div>
 
-    <div style="
-        width:100%;
-        height:150px;
-        background:#2563eb;
-        position:absolute;
-        bottom:0;
-    "></div>
+            <!-- BALOK -->
+            <div style="
+                width:60px;
+                height:60px;
+                background:#8B4513;
+                position:absolute;
+                left:50%;
+                transform:translateX(-50%);
+                bottom:{y}px;
+                border-radius:5px;
+                box-shadow:0 10px 20px rgba(0,0,0,0.3);
+            "></div>
 
-    <div style="
-        position:absolute;
-        bottom:150px;
-        width:100%;
-        height:3px;
-        background:white;
-    "></div>
+        </div>
+        """, unsafe_allow_html=True)
 
-    <div style="
-        position:absolute;
-        top:10px;
-        left:50%;
-        transform:translateX(-50%);
-        font-weight:bold;
-        font-size:18px;
-        color:black;
-    ">
-        {label}
-    </div>
-
-    <div style="
-        width:60px;
-        height:60px;
-        background:#8B4513;
-        position:absolute;
-        left:50%;
-        transform:translateX(-50%);
-        bottom:{posisi}px;
-        border-radius:5px;
-        box-shadow:0 10px 20px rgba(0,0,0,0.3);
-    "></div>
-
-</div>
-""", unsafe_allow_html=True)
+        time.sleep(0.05)
 
 # =====================
 # GAME
