@@ -71,6 +71,20 @@ elif menu == "🌊 Simulasi":
     Fa = rho * g * volume
     W = massa * g
 
+    # Tentukan kondisi dan target
+    if Fa > W:
+        kondisi = "terapung"
+        st.success("🟢 Terapung")
+        target = 150
+    elif Fa == W:
+        kondisi = "melayang"
+        st.info("🟡 Melayang")
+        target = 80
+    else:
+        kondisi = "tenggelam"
+        st.error("🔴 Tenggelam")
+        target = 10
+
     # Info gaya
     st.markdown(f"""
     <div class="card">
@@ -79,68 +93,48 @@ elif menu == "🌊 Simulasi":
     </div>
     """, unsafe_allow_html=True)
 
-    # Tombol start
+    # Tombol Start
     start = st.button("▶️ Start Simulasi")
 
+    # Inisialisasi posisi
+    if "posisi" not in st.session_state:
+        st.session_state.posisi = 20
+
+    placeholder = st.empty()
+
+    # Animasi hanya jalan kalau tombol ditekan
     if start:
-        # Tentukan posisi langsung (tanpa animasi)
-        if Fa > W:
-            posisi = 180
-            label = "🟢 Terapung"
-        elif Fa == W:
-            posisi = 90
-            label = "🟡 Melayang"
-        else:
-            posisi = 20
-            label = "🔴 Tenggelam"
+        for _ in range(80):
+            t = time.time()
 
-        # Render langsung
-        st.markdown(f"""
-        <div style="
-            height:300px;
-            background:#cce7ff;
-            border-radius:15px;
-            position:relative;
-            overflow:hidden;
-        ">
+            posisi = st.session_state.posisi
+            posisi += (target - posisi) * 0.1   # smooth ke target
+            posisi += 8 * math.sin(t * 3)      # osilasi naik-turun
+            st.session_state.posisi = posisi
 
-            <!-- Air setengah -->
+            placeholder.markdown(f"""
             <div style="
-                width:100%;
-                height:150px;
+                height:280px;
                 background:#2563eb;
-                position:absolute;
-                bottom:0;
-            "></div>
-
-            <!-- Label -->
-            <div style="
-                position:absolute;
-                top:10px;
-                left:50%;
-                transform:translateX(-50%);
-                font-weight:bold;
-                color:white;
-                font-size:18px;
-            ">
-                {label}
+                border-radius:15px;
+                position:relative;
+                overflow:hidden;
+            ">                         
+                <div style="
+                    width:60px;
+                    height:60px;
+                    background:#8B4513;
+                    position:absolute;
+                    left:50%;
+                    transform:translateX(-50%);
+                    bottom:{posisi}px;
+                    border-radius:5px;
+                    box-shadow:0 10px 20px rgba(0,0,0,0.3);
+                "></div> 
             </div>
+            """, unsafe_allow_html=True)
 
-            <!-- Balok coklat -->
-            <div style="
-                width:60px;
-                height:60px;
-                background:#8B4513;
-                position:absolute;
-                left:50%;
-                transform:translateX(-50%);
-                bottom:{posisi}px;
-                border-radius:5px;
-                box-shadow:0 10px 20px rgba(0,0,0,0.3);
-            "></div>
-
-        </div>
-        """, unsafe_allow_html=True)
+            time.sleep(0.05)
 
 # =====================
 # GAME
