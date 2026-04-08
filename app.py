@@ -71,7 +71,6 @@ elif menu == "🌊 Simulasi":
     Fa = rho * g * volume
     W = massa * g
 
-    # Info gaya
     st.markdown(f"""
     <div class="card">
     Gaya Apung: <b>{Fa:.2f} N</b> <br>
@@ -79,10 +78,16 @@ elif menu == "🌊 Simulasi":
     </div>
     """, unsafe_allow_html=True)
 
-    # Tombol Start
-    start = st.button("▶️ Start Simulasi")
+    # =====================
+    # STATE START
+    # =====================
+    if "start_simulasi" not in st.session_state:
+        st.session_state.start_simulasi = False
 
-    # Tentukan target
+    if st.button("▶️ Start Simulasi"):
+        st.session_state.start_simulasi = True
+
+    # Tentukan target posisi
     if Fa > W:
         target = 180
     elif Fa == W:
@@ -95,16 +100,23 @@ elif menu == "🌊 Simulasi":
 
     placeholder = st.empty()
 
-    if start:
-        for _ in range(80):
+    # =====================
+    # ANIMASI
+    # =====================
+    if st.session_state.start_simulasi:
+        for _ in range(60):
             t = time.time()
 
             posisi = st.session_state.posisi
-            posisi += (target - posisi) * 0.1
-            posisi += 6 * math.sin(t * 3)
+            posisi += (target - posisi) * 0.15
+
+            # osilasi kecil
+            if abs(target - posisi) < 5:
+                posisi += 5 * math.sin(t * 3)
+
             st.session_state.posisi = posisi
 
-            # 🔥 Keterangan ikut posisi (DINAMIS)
+            # Label dinamis
             if posisi > 150:
                 label = "🟢 Terapung"
             elif posisi > 70:
@@ -121,7 +133,7 @@ elif menu == "🌊 Simulasi":
                 overflow:hidden;
             ">
 
-                <!-- AIR (SETENGAH) -->
+                <!-- AIR SETENGAH -->
                 <div style="
                     width:100%;
                     height:150px;
@@ -130,7 +142,7 @@ elif menu == "🌊 Simulasi":
                     bottom:0;
                 "></div>
 
-                <!-- GARIS PERMUKAAN AIR -->
+                <!-- GARIS AIR -->
                 <div style="
                     position:absolute;
                     bottom:150px;
@@ -139,7 +151,7 @@ elif menu == "🌊 Simulasi":
                     background:white;
                 "></div>
 
-                <!-- LABEL KONDISI -->
+                <!-- LABEL -->
                 <div style="
                     position:absolute;
                     top:10px;
@@ -147,7 +159,6 @@ elif menu == "🌊 Simulasi":
                     transform:translateX(-50%);
                     font-weight:bold;
                     font-size:18px;
-                    color:#0f172a;
                 ">
                     {label}
                 </div>
