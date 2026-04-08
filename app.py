@@ -178,6 +178,8 @@ elif menu == "🌊 Simulasi":
             </div>
             """, unsafe_allow_html=True)
 
+    time.sleep(0.05)
+
 # =====================
 # GAME
 # =====================
