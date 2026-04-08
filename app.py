@@ -61,76 +61,80 @@ if menu == "🏠 Home":
 # SIMULASI
 # =====================
 elif menu == "🌊 Simulasi":
-    st.title("🌊 Simulasi Sederhana Archimedes")
+    st.title("🌊 Simulasi Archimedes")
 
-    st.write("Masukkan nilai:")
+    rho = st.slider("Massa jenis fluida (kg/m³)", 500, 1500, 1000)
+    volume = st.slider("Volume (m³)", 0.1, 5.0, 1.0)
+    massa = st.slider("Massa benda (kg)", 0.1, 10.0, 2.0)
 
-    # INPUT MANUAL DARI 0
-    massa_benda = st.number_input("Massa benda", 0.0, 10000.0, 0.0)
-    massa_jenis_air = st.number_input("Massa jenis air", 0.0, 10000.0, 0.0)
+    g = 9.8
+    Fa = rho * g * volume
+    W = massa * g
 
-    Fa = st.number_input("Gaya apung (Fa)", 0.0, 10000.0, 0.0)
-    W = st.number_input("Berat benda (W)", 0.0, 10000.0, 0.0)
+    # Tentukan kondisi dan target
+    if Fa > W:
+        kondisi = "terapung"
+        st.success("🟢 Terapung")
+        target = 150
+    elif Fa == W:
+        kondisi = "melayang"
+        st.info("🟡 Melayang")
+        target = 80
+    else:
+        kondisi = "tenggelam"
+        st.error("🔴 Tenggelam")
+        target = 10
 
-    # KONDISI
-    kondisi = "-"
-    posisi = 20  # default bawah
-
-    if Fa == W and Fa != 0:
-        kondisi = "🟡 Melayang"
-        posisi = 100
-    elif massa_benda < massa_jenis_air and massa_benda != 0:
-        kondisi = "🟢 Terapung"
-        posisi = 180
-    elif massa_benda > massa_jenis_air:
-        kondisi = "🔴 Tenggelam"
-        posisi = 20
-
-    st.write(f"**Kondisi: {kondisi}**")
-
-    # VISUAL
+    # Info gaya
     st.markdown(f"""
-    <div style="
-        height:300px;
-        background:#e0f2fe;
-        border-radius:15px;
-        position:relative;
-        overflow:hidden;
-    ">
-
-        <!-- AIR SETENGAH -->
-        <div style="
-            position:absolute;
-            bottom:0;
-            width:100%;
-            height:150px;
-            background:#2563eb;
-        "></div>
-
-        <!-- GARIS AIR -->
-        <div style="
-            position:absolute;
-            bottom:150px;
-            width:100%;
-            height:2px;
-            background:white;
-        "></div>
-
-        <!-- BALOK COKLAT -->
-        <div style="
-            width:60px;
-            height:60px;
-            background:#8B4513;
-            position:absolute;
-            left:50%;
-            transform:translateX(-50%);
-            bottom:{posisi}px;
-            border-radius:5px;
-            box-shadow:0 10px 20px rgba(0,0,0,0.3);
-        "></div>
-
+    <div class="card">
+    Gaya Apung: <b>{Fa:.2f} N</b> <br>
+    Berat Benda: <b>{W:.2f} N</b>
     </div>
     """, unsafe_allow_html=True)
+
+    # Tombol Start
+    start = st.button("▶️ Start Simulasi")
+
+    # Inisialisasi posisi
+    if "posisi" not in st.session_state:
+        st.session_state.posisi = 20
+
+    placeholder = st.empty()
+
+    # Animasi hanya jalan kalau tombol ditekan
+    if start:
+        for _ in range(80):
+            t = time.time()
+
+            posisi = st.session_state.posisi
+            posisi += (target - posisi) * 0.1   # smooth ke target
+            posisi += 8 * math.sin(t * 3)      # osilasi naik-turun
+            st.session_state.posisi = posisi
+
+            placeholder.markdown(f"""
+            <div style="
+                height:280px;
+                background:#2563eb;
+                border-radius:15px;
+                position:relative;
+                overflow:hidden;
+            ">                         
+                <div style="
+                    width:60px;
+                    height:60px;
+                    background:#8B4513;
+                    position:absolute;
+                    left:50%;
+                    transform:translateX(-50%);
+                    bottom:{posisi}px;
+                    border-radius:5px;
+                    box-shadow:0 10px 20px rgba(0,0,0,0.3);
+                "></div> 
+            </div>
+            """, unsafe_allow_html=True)
+
+            time.sleep(0.05)
 
 # =====================
 # GAME
