@@ -63,59 +63,50 @@ if menu == "🏠 Home":
 elif menu == "🌊 Simulasi":
     st.title("🌊 Simulasi Archimedes")
 
-    # INPUT
+    # INPUT MANUAL (NO SLIDER)
     col1, col2, col3 = st.columns(3)
 
     with col1:
-        rho_fluida = st.number_input("ρ Fluida (kg/m³)", min_value=0.0, value=0.0)
+        rho_fluida = st.number_input("ρ Fluida (kg/m³)", min_value=0.0, value=1000.0)
 
     with col2:
-        volume = st.number_input("Volume (m³)", min_value=0.0, value=0.0, format="%.2f")
+        volume = st.number_input("Volume (m³)", min_value=0.01, value=1.0, format="%.2f")
 
     with col3:
-        massa = st.number_input("Massa (kg)", min_value=0.0, value=0.0, format="%.2f")
+        massa = st.number_input("Massa (kg)", min_value=0.01, value=2.0, format="%.2f")
 
     g = 9.8
-
-    # VALIDASI
-    if rho_fluida == 0 and volume == 0 and massa == 0:
-        st.info("Masukkan nilai terlebih dahulu untuk memulai simulasi")
-        st.stop()
-
-    if volume == 0:
-        st.warning("⚠️ Volume tidak boleh 0!")
-        st.stop()
 
     # PERHITUNGAN
     rho_benda = massa / volume
     Fa = rho_fluida * g * volume
     W = massa * g
 
-    # LOGIKA
+    # LOGIKA KONDISI
     if rho_benda < rho_fluida:
         kondisi = "Terapung"
         warna = "🟢"
-        target = 210   # di atas air
+        target = 180
     elif abs(rho_benda - rho_fluida) < 0.01:
         kondisi = "Melayang"
         warna = "🟡"
-        target = 120   # di tengah air
+        target = 100
     else:
         kondisi = "Tenggelam"
         warna = "🔴"
-        target = 40    # di bawah air
+        target = 20
 
-    # SESSION
+    # SESSION STATE
     if "jalan" not in st.session_state:
         st.session_state.jalan = False
     if "posisi" not in st.session_state:
-        st.session_state.posisi = 60
+        st.session_state.posisi = 50
 
     # BUTTON
     if st.button("▶️ Start / Stop Simulasi"):
         st.session_state.jalan = not st.session_state.jalan
 
-    # INFO
+    # INFO (AUTO UPDATE)
     st.markdown(f"""
     <div class="card">
     <b>Status:</b> {warna} {kondisi} <br><br>
@@ -143,32 +134,12 @@ elif menu == "🌊 Simulasi":
 
             placeholder.markdown(f"""
             <div style="
-                height:300px;
-                background:#e0f2fe;
+                height:280px;
+                background:#2563eb;
                 border-radius:15px;
                 position:relative;
                 overflow:hidden;
-            ">
-
-                <!-- AIR -->
-                <div style="
-                    position:absolute;
-                    bottom:0;
-                    width:100%;
-                    height:50%;
-                    background:#38bdf8;
-                "></div>
-
-                <!-- GARIS PERMUKAAN -->
-                <div style="
-                    position:absolute;
-                    bottom:50%;
-                    width:100%;
-                    height:4px;
-                    background:#0ea5e9;
-                "></div>
-
-                <!-- BENDA -->
+            ">                         
                 <div style="
                     width:60px;
                     height:60px;
@@ -177,10 +148,8 @@ elif menu == "🌊 Simulasi":
                     left:50%;
                     transform:translateX(-50%);
                     bottom:{st.session_state.posisi}px;
-                    border-radius:8px;
-                    box-shadow:0 10px 20px rgba(0,0,0,0.3);
-                "></div>
-
+                    border-radius:5px;
+                "></div> 
             </div>
             """, unsafe_allow_html=True)
 
