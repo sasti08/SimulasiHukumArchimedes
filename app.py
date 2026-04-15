@@ -63,54 +63,66 @@ if menu == "🏠 Home":
 elif menu == "🌊 Simulasi":
     st.title("🌊 Simulasi Archimedes")
 
-    rho = st.slider("Massa jenis fluida (kg/m³)", 500, 1500, 1000)
-    volume = st.slider("Volume (m³)", 0.1, 5.0, 1.0)
+    # INPUT
+    rho_fluida = st.slider("Massa jenis fluida (kg/m³)", 500, 1500, 1000)
+    volume = st.slider("Volume benda (m³)", 0.1, 5.0, 1.0)
     massa = st.slider("Massa benda (kg)", 0.1, 10.0, 2.0)
 
     g = 9.8
-    Fa = rho * g * volume
+
+    # HITUNG
+    rho_benda = massa / volume
+    Fa = rho_fluida * g * volume
     W = massa * g
 
-    # Tentukan kondisi dan target
-    if Fa > W:
-        kondisi = "terapung"
+    # LOGIKA BERDASARKAN MASSA JENIS
+    if rho_benda < rho_fluida:
+        kondisi = "Terapung"
+        warna = "🟢"
+        target = 180
         st.success("🟢 Terapung")
-        target = 150
-    elif Fa == W:
-        kondisi = "melayang"
+    elif rho_benda == rho_fluida:
+        kondisi = "Melayang"
+        warna = "🟡"
+        target = 100
         st.info("🟡 Melayang")
-        target = 80
     else:
-        kondisi = "tenggelam"
+        kondisi = "Tenggelam"
+        warna = "🔴"
+        target = 20
         st.error("🔴 Tenggelam")
-        target = 10
 
-    # Info gaya
+    # INFO
     st.markdown(f"""
     <div class="card">
+    Massa jenis benda: <b>{rho_benda:.2f} kg/m³</b> <br>
+    Massa jenis fluida: <b>{rho_fluida} kg/m³</b> <br><br>
+
     Gaya Apung: <b>{Fa:.2f} N</b> <br>
-    Berat Benda: <b>{W:.2f} N</b>
+    Berat Benda: <b>{W:.2f} N</b> <br><br>
+
+    <b>Keterangan:</b><br>
+    ρ benda &lt; ρ fluida → Terapung <br>
+    ρ benda = ρ fluida → Melayang <br>
+    ρ benda &gt; ρ fluida → Tenggelam
     </div>
     """, unsafe_allow_html=True)
 
-    # Tombol Start
+    # BUTTON
     start = st.button("▶️ Start Simulasi")
-
-    # Inisialisasi posisi
-    if "posisi" not in st.session_state:
-        st.session_state.posisi = 20
 
     placeholder = st.empty()
 
-    # Animasi hanya jalan kalau tombol ditekan
+    # posisi awal reset tiap start
     if start:
-        for _ in range(80):
-            t = time.time()
+        posisi = 50
 
-            posisi = st.session_state.posisi
-            posisi += (target - posisi) * 0.1   # smooth ke target
-            posisi += 8 * math.sin(t * 3)      # osilasi naik-turun
-            st.session_state.posisi = posisi
+        for i in range(60):
+            # gerakan smooth ke target
+            posisi += (target - posisi) * 0.15
+
+            # efek gelombang kecil (biar hidup)
+            posisi += math.sin(i * 0.3) * 3
 
             placeholder.markdown(f"""
             <div style="
