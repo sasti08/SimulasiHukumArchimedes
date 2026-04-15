@@ -63,7 +63,7 @@ if menu == "🏠 Home":
 elif menu == "🌊 Simulasi":
     st.title("🌊 Simulasi Archimedes")
 
-    # INPUT MANUAL (NO SLIDER)
+    # INPUT MANUAL (SEMUA MULAI DARI 0)
     col1, col2, col3 = st.columns(3)
 
     with col1:
@@ -76,6 +76,15 @@ elif menu == "🌊 Simulasi":
         massa = st.number_input("Massa (kg)", min_value=0.0, value=0.0, format="%.2f")
 
     g = 9.8
+
+    # VALIDASI BIAR GA ERROR
+    if rho_fluida == 0 and volume == 0 and massa == 0:
+        st.info("Masukkan nilai terlebih dahulu untuk memulai simulasi")
+        st.stop()
+
+    if volume == 0:
+        st.warning("⚠️ Volume tidak boleh 0!")
+        st.stop()
 
     # PERHITUNGAN
     rho_benda = massa / volume
@@ -106,7 +115,7 @@ elif menu == "🌊 Simulasi":
     if st.button("▶️ Start / Stop Simulasi"):
         st.session_state.jalan = not st.session_state.jalan
 
-    # INFO (AUTO UPDATE)
+    # INFO
     st.markdown(f"""
     <div class="card">
     <b>Status:</b> {warna} {kondisi} <br><br>
