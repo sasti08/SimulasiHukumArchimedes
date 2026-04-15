@@ -67,13 +67,13 @@ elif menu == "🌊 Simulasi":
     col1, col2, col3 = st.columns(3)
 
     with col1:
-        rho_fluida = st.number_input("ρ Fluida (kg/m³)", min_value=0.0, value=0.0)
+        rho_fluida = st.number_input("ρ Fluida (kg/m³)", min_value=0.0, value=1000.0)
 
     with col2:
-        volume = st.number_input("Volume (m³)", min_value=0.0, value=0.0, format="%.2f")
+        volume = st.number_input("Volume (m³)", min_value=0.01, value=1.0, format="%.2f")
 
     with col3:
-        massa = st.number_input("Massa (kg)", min_value=0.0, value=0.0, format="%.2f")
+        massa = st.number_input("Massa (kg)", min_value=0.01, value=2.0, format="%.2f")
 
     g = 9.8
 
