@@ -75,31 +75,40 @@ elif menu == "🌊 Simulasi":
     Fa = rho_fluida * g * volume
     W = massa * g
 
-    # LOGIKA BERDASARKAN MASSA JENIS
+    # LOGIKA
     if rho_benda < rho_fluida:
         kondisi = "Terapung"
         warna = "🟢"
         target = 180
-        st.success("🟢 Terapung")
-    elif rho_benda == rho_fluida:
+    elif abs(rho_benda - rho_fluida) < 0.01:
         kondisi = "Melayang"
         warna = "🟡"
         target = 100
-        st.info("🟡 Melayang")
     else:
         kondisi = "Tenggelam"
         warna = "🔴"
         target = 20
-        st.error("🔴 Tenggelam")
 
-    # INFO
+    # STATE
+    if "jalan" not in st.session_state:
+        st.session_state.jalan = False
+    if "posisi" not in st.session_state:
+        st.session_state.posisi = 50
+
+    # BUTTON
+    if st.button("▶️ Start / Stop"):
+        st.session_state.jalan = not st.session_state.jalan
+
+    # INFO (INI AKAN SELALU UPDATE)
     st.markdown(f"""
     <div class="card">
-    Massa jenis benda: <b>{rho_benda:.2f} kg/m³</b> <br>
-    Massa jenis fluida: <b>{rho_fluida} kg/m³</b> <br><br>
+    <b>Status:</b> {warna} {kondisi} <br><br>
+
+    Massa jenis benda: <b>{rho_benda:.2f}</b> <br>
+    Massa jenis fluida: <b>{rho_fluida}</b> <br><br>
 
     Gaya Apung: <b>{Fa:.2f} N</b> <br>
-    Berat Benda: <b>{W:.2f} N</b> <br><br>
+    Berat: <b>{W:.2f} N</b> <br><br>
 
     <b>Keterangan:</b><br>
     ρ benda &lt; ρ fluida → Terapung <br>
@@ -108,21 +117,16 @@ elif menu == "🌊 Simulasi":
     </div>
     """, unsafe_allow_html=True)
 
-    # BUTTON
-    start = st.button("▶️ Start Simulasi")
-
     placeholder = st.empty()
 
-    # posisi awal reset tiap start
-    if start:
-        posisi = 50
+    # ANIMASI
+    if st.session_state.jalan:
+        for i in range(80):
+            # smooth movement
+            st.session_state.posisi += (target - st.session_state.posisi) * 0.15
 
-        for i in range(60):
-            # gerakan smooth ke target
-            posisi += (target - posisi) * 0.15
-
-            # efek gelombang kecil (biar hidup)
-            posisi += math.sin(i * 0.3) * 3
+            # efek gelombang
+            st.session_state.posisi += math.sin(i * 0.3) * 2
 
             placeholder.markdown(f"""
             <div style="
@@ -139,14 +143,15 @@ elif menu == "🌊 Simulasi":
                     position:absolute;
                     left:50%;
                     transform:translateX(-50%);
-                    bottom:{posisi}px;
+                    bottom:{st.session_state.posisi}px;
                     border-radius:5px;
-                    box-shadow:0 10px 20px rgba(0,0,0,0.3);
                 "></div> 
             </div>
             """, unsafe_allow_html=True)
 
             time.sleep(0.05)
+
+        st.rerun()
 
 # =====================
 # GAME
