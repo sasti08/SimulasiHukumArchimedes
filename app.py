@@ -63,19 +63,26 @@ if menu == "🏠 Home":
 elif menu == "🌊 Simulasi":
     st.title("🌊 Simulasi Archimedes")
 
-    # INPUT
-    rho_fluida = st.slider("Massa jenis fluida (kg/m³)", 500, 1500, 1000)
-    volume = st.slider("Volume benda (m³)", 0.1, 5.0, 1.0)
-    massa = st.slider("Massa benda (kg)", 0.1, 10.0, 2.0)
+    # INPUT MANUAL (NO SLIDER)
+    col1, col2, col3 = st.columns(3)
+
+    with col1:
+        rho_fluida = st.number_input("ρ Fluida (kg/m³)", min_value=0.0, value=1000.0)
+
+    with col2:
+        volume = st.number_input("Volume (m³)", min_value=0.01, value=1.0, format="%.2f")
+
+    with col3:
+        massa = st.number_input("Massa (kg)", min_value=0.01, value=2.0, format="%.2f")
 
     g = 9.8
 
-    # HITUNG
+    # PERHITUNGAN
     rho_benda = massa / volume
     Fa = rho_fluida * g * volume
     W = massa * g
 
-    # LOGIKA
+    # LOGIKA KONDISI
     if rho_benda < rho_fluida:
         kondisi = "Terapung"
         warna = "🟢"
@@ -89,30 +96,30 @@ elif menu == "🌊 Simulasi":
         warna = "🔴"
         target = 20
 
-    # STATE
+    # SESSION STATE
     if "jalan" not in st.session_state:
         st.session_state.jalan = False
     if "posisi" not in st.session_state:
         st.session_state.posisi = 50
 
     # BUTTON
-    if st.button("▶️ Start / Stop"):
+    if st.button("▶️ Start / Stop Simulasi"):
         st.session_state.jalan = not st.session_state.jalan
 
-    # INFO (INI AKAN SELALU UPDATE)
+    # INFO (AUTO UPDATE)
     st.markdown(f"""
     <div class="card">
     <b>Status:</b> {warna} {kondisi} <br><br>
 
-    Massa jenis benda: <b>{rho_benda:.2f}</b> <br>
-    Massa jenis fluida: <b>{rho_fluida}</b> <br><br>
+    ρ benda = <b>{rho_benda:.2f}</b><br>
+    ρ fluida = <b>{rho_fluida}</b><br><br>
 
-    Gaya Apung: <b>{Fa:.2f} N</b> <br>
-    Berat: <b>{W:.2f} N</b> <br><br>
+    Gaya Apung = <b>{Fa:.2f} N</b><br>
+    Berat = <b>{W:.2f} N</b><br><br>
 
     <b>Keterangan:</b><br>
-    ρ benda &lt; ρ fluida → Terapung <br>
-    ρ benda = ρ fluida → Melayang <br>
+    ρ benda &lt; ρ fluida → Terapung<br>
+    ρ benda = ρ fluida → Melayang<br>
     ρ benda &gt; ρ fluida → Tenggelam
     </div>
     """, unsafe_allow_html=True)
@@ -122,10 +129,7 @@ elif menu == "🌊 Simulasi":
     # ANIMASI
     if st.session_state.jalan:
         for i in range(80):
-            # smooth movement
             st.session_state.posisi += (target - st.session_state.posisi) * 0.15
-
-            # efek gelombang
             st.session_state.posisi += math.sin(i * 0.3) * 2
 
             placeholder.markdown(f"""
